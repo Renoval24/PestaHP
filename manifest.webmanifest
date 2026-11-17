@@ -1,0 +1,17 @@
+{
+  "name": "PestaHP",
+  "short_name": "PestaHP",
+  "description": "Game pesta satu HP: Imposter, game bom, Cari Warna, dan lainnya.",
+  "lang": "id",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#16161d",
+  "theme_color": "#16161d",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}

@@ -1,0 +1,1057 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#16161d"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><style>:root{color-scheme:dark}body{margin:0}[hidden]{display:none!important}</style></head><body>
+<title>PestaHP</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=DM+Sans:wght@400;500;700&display=swap">
+<style>
+/* Layout: satu kolom sempit ala layar HP, kartu game warna-warni di atas latar grafit. Satu tema gelap yang disengaja. */
+:root{
+  --bg:#16161d; --surface:#21212b; --surface2:#2c2c38; --line:#3a3a49;
+  --ink:#f4f2ee; --mute:#a9a7b5;
+  --coral:#ff6b6b; --sun:#ffd23f; --mint:#4be0b0; --sky:#5ec8ff; --grape:#b69cff; --tang:#ff9f43;
+  --on:#16161d;
+  --display:'Bricolage Grotesque','Trebuchet MS',system-ui,sans-serif;
+  --body:'DM Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.45 var(--body);
+  padding-block:12px 28px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  -webkit-tap-highlight-color:transparent}
+#app{max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:14px;min-height:calc(100vh - 40px)}
+h1,h2,h3{font-family:var(--display);font-weight:800;line-height:1.05;margin:0;text-wrap:balance}
+h1{font-size:2.3rem;letter-spacing:-.02em} h2{font-size:1.6rem} h3{font-size:1.15rem}
+p{margin:0}.mute{color:var(--mute)}.small{font-size:.86rem}.center{text-align:center}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0}
+:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+.bar{display:flex;align-items:center;gap:10px;min-height:44px}
+.bar h2{flex:1;font-size:1.3rem}
+.exit{position:fixed;top:max(10px,env(safe-area-inset-top,0px));right:max(10px,env(safe-area-inset-right,0px));width:40px;height:40px;border-radius:50%;background:var(--surface2);color:var(--mute);font-size:1rem;font-weight:700;z-index:20;opacity:.85}
+.bar{padding-right:48px}
+.ib{background:var(--surface);border-radius:12px;min-width:44px;height:44px;font-size:1.1rem;font-weight:700}
+.btn{background:var(--sun);color:var(--on);font-weight:700;font-size:1.05rem;min-height:52px;padding:12px 20px;border-radius:16px;width:100%}
+.btn.alt{background:var(--surface2);color:var(--ink)}
+.btn.coral{background:var(--coral)} .btn.mint{background:var(--mint)} .btn.sky{background:var(--sky)} .btn.grape{background:var(--grape)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1 1 0;min-width:0}
+.card{background:var(--surface);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.label{font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:var(--surface2);border-radius:999px;padding:8px 14px;font-weight:500;min-height:40px;display:inline-flex;align-items:center;gap:8px}
+.chip.sel{background:var(--ink);color:var(--on);font-weight:700}
+.chip .x{background:none;font-size:1.1rem;color:var(--mute);padding:0 2px}
+input[type=text],textarea,select{background:var(--surface2);border:2px solid transparent;border-radius:14px;padding:12px 14px;width:100%;min-height:48px}
+input[type=text]:focus,textarea:focus,select:focus{border-color:var(--sky);outline:none}
+textarea{min-height:110px;resize:vertical}
+.stepper{display:flex;align-items:center;gap:14px}
+.stepper b{font:800 1.6rem var(--display);min-width:2ch;text-align:center}
+.stepper button{background:var(--surface2);width:48px;height:48px;border-radius:14px;font-size:1.4rem;font-weight:700}
+/* beranda */
+.logo{font:800 2.7rem/0.95 var(--display);letter-spacing:-.03em}
+.logo span{color:var(--sun)}
+.group{display:flex;flex-direction:column;gap:10px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.game{background:var(--c,var(--sun));color:var(--on);border-radius:22px;padding:14px;text-align:left;display:flex;flex-direction:column;gap:6px;min-height:128px;position:relative}
+.game b{font:800 1.25rem/1.05 var(--display)}
+.game span{font-size:.86rem;line-height:1.3;flex:1}
+.game i{font-style:normal;font-size:.74rem;font-weight:700;opacity:.7;letter-spacing:.04em}
+.game.wide{grid-column:1/-1;min-height:96px}
+/* layar bermain */
+.stage{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:16px;padding:12px 4px}
+.big{font:800 clamp(2rem,9vw,3.2rem)/1.05 var(--display);text-wrap:balance}
+.huge{font:800 clamp(3.4rem,19vw,6.5rem)/1 var(--display);font-variant-numeric:tabular-nums}
+.tag{display:inline-block;background:var(--c,var(--sun));color:var(--on);font-weight:700;border-radius:999px;padding:4px 12px;font-size:.82rem}
+.hold{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
+.hold .on-show{display:none}.hold.on .on-show{display:flex}.hold.on .on-hide{display:none}
+.secret{background:var(--surface);border:3px dashed var(--line);border-radius:26px;padding:28px 18px;width:100%;min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center}
+.hold.on.secret{border-style:solid;border-color:var(--sun)}
+.tapzone{width:100%;flex:1;min-height:52vh;border-radius:28px;background:var(--surface);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:22px;text-align:center}
+.bombbar{height:8px;border-radius:8px;background:var(--surface2);overflow:hidden}
+.bombbar i{display:block;height:100%;width:100%;background:var(--coral);transform-origin:left;animation:none}
+.list{display:flex;flex-direction:column;gap:8px}
+.li{background:var(--surface);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px}
+.li .n{font:800 1.1rem var(--display);width:2ch;color:var(--mute)}
+.li .g{flex:1;min-width:0;overflow-wrap:anywhere}
+.swatch{width:100%;aspect-ratio:16/10;border-radius:24px;max-height:46vh}
+.sw{width:44px;height:44px;border-radius:12px;flex:none;border:2px solid var(--line)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
+.pair .sw2{aspect-ratio:1;border-radius:20px;display:flex;align-items:flex-end;padding:8px;font-weight:700;font-size:.8rem;color:#fff;text-shadow:0 1px 3px #0008}
+input[type=range]{width:100%;height:40px;accent-color:var(--sun)}
+.sl{display:flex;flex-direction:column;gap:2px;width:100%;text-align:left}
+.photos{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.photos button{aspect-ratio:1;border-radius:12px;overflow:hidden;background:var(--surface2);padding:0}
+.photos img{width:100%;height:100%;object-fit:cover;display:block}
+.overlay{position:fixed;inset:0;background:#000d;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px}
+.overlay video,.overlay img.full{max-width:100%;max-height:68vh;border-radius:18px;background:#000}
+.toast{position:fixed;left:50%;bottom:max(24px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--on);padding:10px 18px;border-radius:999px;font-weight:700;z-index:60;max-width:90vw}
+.boom{animation:shake .5s}
+@keyframes shake{0%,100%{transform:none}20%{transform:translateX(-10px) rotate(-1deg)}40%{transform:translateX(10px) rotate(1deg)}60%{transform:translateX(-8px)}80%{transform:translateX(8px)}}
+.pulse{animation:pulse 1s infinite}
+@keyframes pulse{50%{transform:scale(1.04)}}
+@media (prefers-reduced-motion:reduce){.boom,.pulse{animation:none}}
+</style>
+<div id="app"></div>
+<script>
+(function(){
+/* ===== Data konten (ditulis sendiri) ===== */
+const CATS = {
+  'Makanan': ['nasi goreng|digoreng, sering untuk sarapan|mie goreng','bakso|bulat berkuah|siomay','sate|ditusuk lalu dibakar|kebab','rendang|santan dan pedas|gulai','soto|kuah kuning hangat|rawon','martabak|tebal dan manis|terang bulan','pizza|bulat, ada keju|lasagna','es krim|dingin dan manis|gelato','tempe|kedelai fermentasi|tahu','gado-gado|sayur dan bumbu kacang|pecel','pisang goreng|camilan sore|molen','kerupuk|renyah|emping'],
+  'Buah': ['apel|merah, renyah|pir','pisang|kuning, dikupas|pepaya','jeruk|segar dan asam|lemon','semangka|merah di dalam|melon','mangga|manis dan harum|nanas','stroberi|merah, kecil|ceri','anggur|bergerombol|kismis','durian|berduri, baunya kuat|nangka','salak|kulit bersisik|rambutan','alpukat|hijau, dibuat jus|pir','kelapa|airnya segar|aren','jambu|ada bijinya|jeruk bali'],
+  'Hewan': ['kucing|mengeong|singa','anjing|menggonggong|serigala','gajah|punya belalai|badak','jerapah|lehernya panjang|zebra','ikan|bernapas dengan insang|hiu','elang|burung pemangsa|burung hantu','kelinci|telinga panjang|tupai','kura-kura|bercangkang|bulus','kuda|bisa ditunggangi|keledai','buaya|reptil di air|biawak','lebah|penghasil madu|tawon','katak|pandai melompat|kodok'],
+  'Tempat': ['sekolah|tempat belajar|kampus','rumah sakit|ada dokter|puskesmas','bandara|pesawat berangkat|stasiun','pasar|ada tawar-menawar|supermarket','pantai|berpasir|danau','perpustakaan|banyak buku|toko buku','bioskop|menonton film|teater','kantor pos|kirim surat|bank','kebun binatang|banyak satwa|taman safari','mal|tempat belanja|pasar malam','pom bensin|isi bahan bakar|bengkel','dapur|tempat memasak|ruang makan'],
+  'Benda': ['payung|saat hujan|jas hujan','kunci|membuka pintu|gembok','kursi|untuk duduk|sofa','kacamata|membantu mata|lensa kontak','sendok|alat makan|garpu','sepatu|dipakai di kaki|sandal','jam|menunjukkan waktu|stopwatch','cermin|memantulkan wajah|kaca','handphone|bisa menelepon|tablet','kulkas|menyimpan dingin|freezer','senter|menyorot gelap|lilin','sapu|membersihkan lantai|pel'],
+  'Profesi': ['dokter|memeriksa pasien|perawat','guru|mengajar murid|dosen','polisi|menjaga ketertiban|satpam','petani|bekerja di sawah|nelayan','pilot|menerbangkan pesawat|masinis','koki|memasak di restoran|pelayan','tukang bangunan|membangun rumah|arsitek','pemadam kebakaran|memadamkan api|tim SAR','penyanyi|bersuara merdu|pemain musik','sopir|memegang kemudi|kondektur','barista|meracik kopi|pelayan kafe','fotografer|memotret|juru kamera'],
+  'Olahraga dan hobi': ['sepak bola|ada gawang|futsal','bulu tangkis|pakai shuttlecock|tenis','renang|di kolam|menyelam','basket|memasukkan ke ring|voli','bersepeda|dua roda dikayuh|motor trail','memancing|pakai kail|menjala','catur|ada raja dan ratu|dam','lari|cepat di lintasan|jalan cepat','yoga|meregang tenang|senam','mendaki|naik gunung|berkemah','menggambar|pakai pensil|melukis','karaoke|bernyanyi bersama|paduan suara'],
+  'Kendaraan': ['sepeda motor|dua roda bermesin|sepeda','mobil|empat roda|bus','kereta api|berjalan di rel|trem','pesawat|terbang di langit|helikopter','kapal|berlayar|perahu','becak|dikayuh pengemudi|bajaj','ojek online|dipesan lewat aplikasi|taksi','truk|mengangkut barang|pick-up','ambulans|bersirene|mobil damkar','angkot|menaikkan banyak penumpang|bus kota','kapal selam|di bawah laut|kapal feri','skuter|berdiri di atasnya|sepatu roda'],
+  'Alam': ['gunung|tinggi menjulang|bukit','sungai|airnya mengalir|danau kecil','hutan|banyak pepohonan|kebun','hujan|air dari langit|gerimis','pelangi|banyak warna|awan','matahari|terang di siang hari|bulan','bulan|tampak saat malam|bintang','pasir|butirannya halus|kerikil','ombak|bergulung ke pantai|arus','petir|kilat menyambar|guntur','api|panas dan menyala|asap','embun|basah di pagi hari|kabut'],
+  'Rumah tangga': ['wajan|untuk menggoreng|panci','blender|menghaluskan|mixer','penanak nasi|memasak nasi|dispenser','kompor|api untuk masak|oven','piring|alas makan|mangkuk','gelas|untuk minum|cangkir','pisau|untuk memotong|gunting','setrika|melicinkan baju|mesin cuci','lemari|tempat pakaian|rak buku','bantal|untuk kepala saat tidur|guling','kasur|tempat tidur|sofa bed','ember|menampung air|baskom'],
+  'Tokoh dan tontonan': ['Doraemon|punya kantong ajaib|Shinchan','Naruto|ninja dari Konoha|Goku','Spongebob|tinggal di nanas|Patrick','Mario|bertopi merah, tukang ledeng|Luigi','Pikachu|kuning dan bisa listrik|Raichu','Batman|pelindung kota Gotham|Superman','Minecraft|dunia balok|Roblox','Upin Ipin|kembar botak|Boboiboy']
+};
+const CAT_KEYS = Object.keys(CATS);
+
+const PROMPT_WHO = [
+ 'paling lama kalau bersiap-siap berangkat','paling sering telat','paling jago masak','akan jadi orang kaya duluan','paling mudah menangis nonton film','paling sering lupa taruh kunci','paling berani naik wahana ekstrem','tertidur duluan saat nonton bareng','paling boros belanja online','paling pandai ngeles','paling cepat membalas chat','paling cuek soal penampilan','paling bisa diandalkan saat darurat','paling mungkin tersesat walau pakai peta','paling jago menyanyi','paling sering lupa nama orang','bakal jadi artis terkenal','paling takut kecoak','paling suka mengatur orang lain','paling bisa menyimpan rahasia','paling mungkin ketiduran di acara penting','paling sering minta traktir','paling sabar menghadapi anak kecil','paling mungkin tertawa di saat serius','akan hidup paling tenang di masa tua'
+];
+const PROMPT_TRUTH = [
+ 'Apa makanan yang paling kamu benci tapi tetap pernah kamu habiskan?','Kebohongan kecil apa yang paling sering kamu ucapkan?','Apa hal paling memalukan yang pernah terjadi di tempat umum?','Siapa di ruangan ini yang paling kamu percaya?','Barang apa yang kamu beli lalu menyesal?','Apa kebiasaan anehmu saat sendirian?','Apa hal terakhir yang kamu cari di internet?','Kapan terakhir kali kamu menangis, dan karena apa?','Apa cita-cita masa kecilmu?','Apa yang paling kamu rindukan dari masa sekolah?','Apa lagu yang diam-diam kamu suka tapi malu mengakuinya?','Hal apa yang membuatmu langsung kesal?','Kalau bisa ulang satu hari dalam hidupmu, hari yang mana?','Apa pujian paling berkesan yang pernah kamu terima?','Rahasia kecil apa yang belum pernah kamu ceritakan ke grup ini?','Apa ketakutan terbesarmu yang terdengar konyol?','Apa pekerjaan impian kalau uang bukan masalah?','Siapa orang yang paling sering kamu telepon?','Apa kebohongan terbesar yang pernah kamu ceritakan waktu kecil?','Apa hal paling nekat yang pernah kamu lakukan?'
+];
+const PROMPT_DARE = [
+ 'Nyanyikan bagian reff lagu favoritmu selama 10 detik.','Tirukan gaya jalan hewan pilihan temanmu.','Bicara dengan aksen daerah lain sampai giliranmu berikutnya.','Peragakan iklan TV yang kamu ingat.','Lakukan 10 kali sit-up atau squat.','Ceritakan sebuah dongeng dalam 20 detik.','Buat pantun tentang orang di sebelah kananmu.','Berdiri dengan satu kaki selama 15 detik sambil menyebut 5 nama buah.','Tirukan suara pembawa berita selama 15 detik.','Menari tanpa musik selama 10 detik.','Pasang wajah paling lucu dan tahan 10 detik.','Rayu sebuah benda di dekatmu dengan gombalan.','Bicara tanpa membuka bibir selama satu putaran.','Ucapkan abjad mundur dari huruf K.','Jadi pelayan restoran dan tawarkan menu ke semua orang.','Tirukan gaya bicara salah satu pemain, biar yang lain menebak.','Tebak lagu dari nyanyian temanmu yang hanya bersenandung.','Buat pidato 15 detik tentang sandal jepit.','Peragakan cara tertawa tiga jenis orang berbeda.','Bisikkan sesuatu yang manis ke pemain di sebelah kirimu.'
+];
+const TOPIC3 = [
+ 'Sebut 3 buah berwarna merah','Sebut 3 makanan yang dijual di kaki lima','Sebut 3 hewan yang hidup di air','Sebut 3 merek motor','Sebut 3 nama kota di Pulau Jawa','Sebut 3 hal yang ada di dapur','Sebut 3 lagu tentang cinta','Sebut 3 warna selain merah dan biru','Sebut 3 benda yang ada di kamar mandi','Sebut 3 pekerjaan yang pakai seragam','Sebut 3 minuman dingin','Sebut 3 alat tulis','Sebut 3 nama pahlawan nasional','Sebut 3 hal yang dibawa saat berlibur','Sebut 3 jajanan sekolah','Sebut 3 jenis kendaraan umum','Sebut 3 hal yang berbunyi nyaring','Sebut 3 pemain bola terkenal','Sebut 3 hewan peliharaan','Sebut 3 hal yang bikin ngantuk','Sebut 3 tokoh kartun','Sebut 3 pulau di Indonesia','Sebut 3 hal yang berbau enak','Sebut 3 buah yang punya biji banyak','Sebut 3 nama bunga'
+];
+const WORDS_ACT = [
+ 'menyikat gigi','naik motor','memancing','memasak mi instan','memotret','memeluk guling','bermain gitar','menjahit','mengepel','berenang','menelepon','menunggu bus','mencuci piring','memukul nyamuk','minum kopi panas','bersin','menendang bola','menggendong bayi','menyetir mobil','tidur sambil duduk','menonton hantu','mengikat tali sepatu','makan sambal terlalu pedas','menawar di pasar','mengetik cepat','mendayung perahu','main layangan','menimba air','menyapu halaman','jadi robot'
+];
+const TOPIC_ONEMORE = [
+ 'nama buah','nama hewan','merek makanan ringan','nama kota di Indonesia','benda berwarna putih','alat dapur','nama negara','jenis olahraga','pekerjaan','nama minuman','benda di dalam tas','sayur-sayuran','tokoh kartun','benda di kamar tidur','bunyi-bunyian','nama pahlawan','merek sepatu','nama lagu Indonesia','alat transportasi','makanan berkuah'
+];
+const PROMPT_SELFIE = [
+ 'Siapa yang paling heboh saat difoto? Tunjuk dan oper!','Siapa yang paling lucu kalau ketawa? Tunjuk dan oper!','Siapa paling mungkin viral di media sosial?','Siapa yang punya gaya foto paling andalan?','Siapa yang paling jago berekspresi datar?','Siapa yang paling lama memilih filter?','Siapa yang paling suka selfie bareng makanan?','Siapa yang paling sering tidak sadar kamera?','Siapa yang akan jadi bintang iklan?','Siapa yang paling jago jadi fotografer?','Tirukan satu ekspresi, lalu oper!','Pasang tampang kaget, lalu oper!','Berikan satu pujian ke pemain lain, lalu oper!','Sebut satu kebiasaan lucu temanmu, lalu oper!','Bilang "cheese" dengan gaya paling aneh, lalu oper!'
+];
+const WORDS_FLIP = [
+ 'pisang','sepeda','ayam goreng','kupu-kupu','payung','kereta api','semangka','kacamata','gunung','tukang bakso','selamat pagi','terima kasih','jalan-jalan','nasi goreng','lampu merah','burung hantu','bulan purnama','kolam renang','es campur','sandal jepit'
+];
+const DEFAULT_PENALTIES = ['Minum segelas air putih.','Nyanyi satu bait lagu tanpa musik.','Ceritakan hal paling memalukan minggu ini.','Joget 10 detik.','Jadi pelayan semua orang selama satu ronde.','Tirukan suara hewan pilihan temanmu.','Berbicara dengan nada tinggi selama satu ronde.','Pijat bahu orang di sebelah kananmu 20 detik.','Bilang "aku sayang kalian" dengan gaya dramatis.','Buat pantun untuk semua pemain.','Jalan seperti kepiting sampai kembali ke kursi.','Biarkan satu orang memilih panggilan untukmu sampai ronde berikutnya.'];
+const IKONIK = ['007','13','42','99','100','101','404','777','911','1337','1945','2000'];
+
+/* ===== Tambahan konten bawaan ===== */
+const MORE_CATS = {
+  'Makanan': ['nasi uduk|gurih, ada bawang goreng|nasi kuning','mie ayam|bertopping ayam kecap|bakmi','pempek|dari ikan, berkuah cuko|otak-otak','lontong sayur|ketupat berkuah santan|ketoprak','sambal|pedas pelengkap makan|saus','kopi|diseduh dan pahit|teh'],
+  'Buah': ['melon|bulat dan manis|timun suri','kiwi|hijau, biji kecil-kecil|alpukat','leci|kulit merah kasar|rambutan','markisa|sarinya asam wangi|jeruk','pepaya|oranye, biji hitam|mangga','blueberry|kecil kebiruan|anggur'],
+  'Hewan': ['ayam|berkokok pagi hari|bebek','sapi|penghasil susu|kerbau','burung beo|bisa menirukan suara|merpati','ular|melata tanpa kaki|cacing','laba-laba|menjaring mangsa|semut','kupu-kupu|bersayap warna-warni|capung','lumba-lumba|pintar di laut|paus'],
+  'Tempat': ['terminal|bus berkumpul|stasiun','taman|santai dan bermain|lapangan','kantor|tempat bekerja|kafe','warung|jual kebutuhan harian|toko kelontong','pelabuhan|kapal bersandar|dermaga','hotel|tempat menginap|penginapan'],
+  'Benda': ['dompet|menyimpan uang|tas kecil','remote|mengatur televisi|saklar','topi|dipakai di kepala|helm','tas|membawa barang|koper','sisir|merapikan rambut|jepit','charger|mengisi daya|power bank'],
+  'Profesi': ['penjahit|membuat pakaian|desainer','tukang cukur|memotong rambut|penata rias','kasir|menghitung belanjaan|pramuniaga','petugas kebersihan|menyapu jalan|tukang kebun','pelukis|kanvas dan kuas|ilustrator','programmer|menulis kode|desainer web'],
+  'Olahraga dan hobi': ['bowling|menjatuhkan pin|biliar','panahan|busur dan sasaran|menembak','tinju|memakai sarung tangan|gulat','skateboard|papan beroda|sepatu roda','golf|tongkat dan lubang|kasti','menari|mengikuti musik|senam'],
+  'Kendaraan': ['sepeda listrik|berbaterai|skuter','gerobak|didorong orang|becak','roket|meluncur ke angkasa|pesawat','perahu karet|mengapung|kano','bajaj|roda tiga|tuk-tuk','delman|ditarik kuda|kereta kencana'],
+  'Alam': ['pohon kelapa|buahnya berair|pohon pisang','gua|gelap di dalam tanah|terowongan','air terjun|air jatuh dari tebing|sungai','gunung berapi|bisa meletus|bukit','bintang|berkelip saat malam|planet','awan|putih di langit|kabut'],
+  'Rumah tangga': ['sabun|berbusa|sampo','handuk|mengeringkan badan|lap','sikat gigi|membersihkan gigi|sisir','kipas angin|berputar sejuk|AC','televisi|layar tontonan|radio','jemuran|mengeringkan baju|setrikaan'],
+  'Tokoh dan tontonan': ['Sonic|landak biru yang cepat|Pikachu','Hello Kitty|kucing putih berpita|Doraemon','Tom dan Jerry|kucing dan tikus|Upin Ipin','Mickey Mouse|tikus bertelinga bulat|Donald Bebek','Elsa|ratu es|Moana','Spider-Man|jaring laba-laba|Batman'],
+  'Sekolah': ['penghapus|menghapus tulisan|tipe-x','papan tulis|tempat guru menulis|buku tulis','seragam|dipakai ke sekolah|baju olahraga','tas sekolah|membawa buku|kotak pensil','bel|tanda masuk kelas|pengeras suara','upacara|hari Senin di lapangan|senam','pensil|ditulis lalu dihapus|pulpen','penggaris|mengukur garis|jangka','kantin|jajan saat istirahat|koperasi','rapor|nilai tiap semester|ijazah'],
+  'Kegiatan harian': ['mandi|membersihkan badan|keramas','sarapan|makan di pagi hari|makan siang','tidur siang|istirahat sebentar|tidur malam','belanja|ke pasar atau mal|jalan-jalan','menonton TV|di ruang keluarga|bermain game','olahraga pagi|jalan atau lari|senam','memasak|di dapur|membersihkan dapur','bermain|bersama teman|belajar','menyapu|membersihkan lantai|mengepel','mencuci baju|pakai deterjen|menyetrika'],
+  'Budaya Indonesia': ['batik|kain bermotif|tenun','angklung|alat musik bambu|kolintang','wayang kulit|bayangan di layar|boneka tangan','tari saman|duduk dan menepuk dada|tari piring','kebaya|pakaian tradisional|sarung','candi|bangunan batu kuno|pura','jamu|minuman herbal tradisional|teh herbal','gotong royong|bekerja bersama|arisan']
+};
+Object.keys(MORE_CATS).forEach(k => { CATS[k] = (CATS[k] || []).concat(MORE_CATS[k]); });
+CAT_KEYS.length = 0; Object.keys(CATS).forEach(k => CAT_KEYS.push(k));
+
+PROMPT_WHO.push('paling hafal jalan pintas','paling lama mandi','paling sering lupa bawa dompet','paling gampang tertawa','paling kuat begadang','paling rapi menyimpan barang','paling jago menawar harga','paling suka bangun siang','paling pandai mendongeng','paling ingat tanggal ulang tahun orang','paling sering salah kirim pesan','paling jago parkir','paling suka kasih nasihat','paling mungkin ketinggalan kereta','paling berisik saat nonton bola');
+PROMPT_TRUTH.push('Makanan apa yang tidak akan pernah bosan kamu makan?','Tempat mana yang paling ingin kamu kunjungi?','Barang apa yang selalu ada di tasmu?','Apa momen paling lucu minggu ini?','Pelajaran sekolah apa yang paling kamu suka dan benci?','Apa kebiasaan baikmu yang jarang diketahui orang?','Hewan apa yang paling mirip denganmu, dan kenapa?','Kalau punya uang seratus juta hari ini, kamu pakai untuk apa?');
+const PROMPT_TRUTH_PRIBADI = ['Siapa orang yang paling sering kamu bicarakan di belakang?','Apa yang pernah kamu sembunyikan dari orang tuamu?','Apa kesalahan terbesar yang kamu sesali?','Apa hal yang kamu lakukan kalau tidak ada yang melihat?','Siapa di ruangan ini yang paling sulit kamu mengerti?','Apa kebohongan terakhir yang kamu ucapkan hari ini?','Apa hal yang membuatmu iri pada seseorang di sini?','Apa rahasia kecil yang belum diketahui keluargamu?'];
+PROMPT_DARE.push('Bercerita tentang harimu hanya dengan gerakan tangan.','Tirukan tokoh kartun sampai tertebak.','Sebutkan 5 hewan secepat mungkin dalam 5 detik.','Pura-pura jadi reporter dan wawancarai pemain di sebelahmu.','Berjalan mundur mengelilingi ruangan.','Nyanyikan lagu anak-anak dengan gaya opera.','Buat patung dari tubuhmu dan tahan 10 detik.','Bicara seperti robot sampai giliranmu berikutnya.');
+TOPIC3.push('Sebut 3 hal yang ada di sekolah','Sebut 3 hewan berkaki empat','Sebut 3 jenis kue','Sebut 3 hal yang dipakai saat hujan','Sebut 3 nama sayuran hijau','Sebut 3 benda yang berbentuk bulat','Sebut 3 pekerjaan di rumah sakit','Sebut 3 oleh-oleh khas daerah','Sebut 3 benda di ruang tamu','Sebut 3 nama sungai atau danau di Indonesia');
+WORDS_ACT.push('menyalakan kompor','mengusir lalat','naik tangga sambil membawa belanjaan','menepuk nyamuk','mencuci motor','memanjat pohon','memasang payung','memberi makan ayam','minum es teh','membuka kado','bermain layang-layang','berfoto selfie');
+TOPIC_ONEMORE.push('nama sayuran','nama kue','merek mobil','benda di sekolah','hal yang ada di taman','nama sungai atau danau','kata berawalan huruf B','nama alat musik');
+PROMPT_SELFIE.push('Siapa yang paling cepat menyerah dalam permainan? Tunjuk dan oper!','Siapa yang paling mudah salah tingkah? Tunjuk dan oper!','Siapa yang paling jago menirukan orang? Tunjuk dan oper!','Pasang ekspresi marah tapi lucu, lalu oper!','Pura-pura tidur dengan wajah paling konyol, lalu oper!');
+WORDS_FLIP.push('selamat malam','kopi susu','tukang sayur','kereta cepat','es krim','sepeda motor','kucing oranye','lampu kamar','mie goreng','hujan deras','kebun binatang','sampai jumpa');
+
+const ADULT_RE = /rahasia|menangis|chat|cinta|gombal|rayu|mantan|membicarakan|sembunyikan|iri pada/i;
+
+/* ===== Inti: util, navigasi, suara, penyimpanan ===== */
+const app = document.getElementById('app');
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem('pestahp.'+k); return v == null ? d : JSON.parse(v); }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem('pestahp.'+k, JSON.stringify(v)); }catch(e){} }
+};
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function rnd(n){ const max = Math.floor(0x100000000 / n) * n; const a = new Uint32Array(1); do{ crypto.getRandomValues(a); }while(a[0] >= max); return a[0] % n; }
+function shuffle(a){ a = a.slice(); for(let i = a.length - 1; i > 0; i--){ const j = rnd(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+const pick = a => a[rnd(a.length)];
+const fmt = s => { s = Math.max(0, Math.round(s)); return Math.floor(s/60) + ':' + String(s%60).padStart(2, '0'); };
+
+let players = store.get('players', []);
+let penalties = store.get('penalties', DEFAULT_PENALTIES);
+let prefs = Object.assign({sound: true, vibrate: true, kid: false}, store.get('prefs', {}));
+/* konten: bawaan + hasil Gemini yang tersimpan di HP (jalan offline) */
+let gen = Object.assign({cats: {}, pools: {}}, store.get('gen', {}));
+const BASE_POOLS = {who: PROMPT_WHO, truth: PROMPT_TRUTH, dare: PROMPT_DARE, topic3: TOPIC3, act: WORDS_ACT, onemore: TOPIC_ONEMORE, selfie: PROMPT_SELFIE, flip: WORDS_FLIP};
+function poolOf(k){
+  let a = BASE_POOLS[k].concat(gen.pools[k] || []);
+  if(k === 'truth' && !prefs.kid) a = a.concat(PROMPT_TRUTH_PRIBADI);
+  if((k === 'truth' || k === 'dare') && prefs.kid) a = a.filter(x => !ADULT_RE.test(x));
+  return a;
+}
+const savePlayers = () => store.set('players', players);
+
+let ACT = {}, timers = [], cleanups = [], nav = [];
+function clearT(){ timers.forEach(t => { clearInterval(t); clearTimeout(t); }); timers = []; cleanups.forEach(f => { try{ f(); }catch(e){} }); cleanups = []; }
+const every = (fn, ms) => { const t = setInterval(fn, ms); timers.push(t); return t; };
+const after = (fn, ms) => { const t = setTimeout(fn, ms); timers.push(t); return t; };
+const onLeave = fn => cleanups.push(fn);
+function go(fn){ nav.push(fn); fn(); }
+/* tombol kembali Android: satu entri riwayat "penjaga" selama bukan di beranda; layar tetap menyala saat bermain */
+let guard = false, ignorePop = 0, wake = null;
+function syncShell(){
+  if(nav.length > 1){
+    if(!guard){ try{ history.pushState({g: 1}, ''); guard = true; }catch(e){} }
+    if(!wake && navigator.wakeLock){ navigator.wakeLock.request('screen').then(s => { wake = s; s.addEventListener('release', () => { wake = null; }); }).catch(() => {}); }
+  } else {
+    if(guard){ guard = false; ignorePop++; try{ history.back(); }catch(e){ ignorePop--; } }
+    if(wake){ try{ wake.release(); }catch(e){} wake = null; }
+  }
+}
+window.addEventListener('popstate', () => { if(ignorePop > 0){ ignorePop--; return; } guard = false; if(nav.length > 1 && ACT.back) ACT.back(); });
+document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible' && nav.length > 1 && !wake) syncShell(); });
+function back(){ nav.pop(); (nav[nav.length - 1] || home)(); }
+function view(html, acts){
+  clearT(); ACT = Object.assign({back}, acts || {});
+  app.innerHTML = html + (nav.length > 1 ? '<button class="exit" data-a="__exit" aria-label="Keluar ke beranda">✕</button>' : ''); window.scrollTo(0, 0);
+  if(ACT._mount) ACT._mount();
+  syncShell();
+}
+const topbar = (title, right = '') => `<div class="bar"><button class="ib" data-a="back" aria-label="Kembali">←</button><h2>${esc(title)}</h2>${right}</div>`;
+
+app.addEventListener('click', e => {
+  const el = e.target.closest('[data-a]');
+  if(!el || el.disabled) return;
+  if(el.dataset.a === '__exit'){ nav.length = 1; home(); return; }
+  const f = ACT[el.dataset.a];
+  if(f){ audioUnlock(); f(el, e); }
+});
+/* tahan untuk melihat */
+const holdOn = e => { const h = e.target.closest('.hold'); if(h){ h.classList.add('on'); audioUnlock(); if(ACT._held) ACT._held(h); } };
+const holdOff = () => document.querySelectorAll('.hold.on').forEach(h => { h.classList.remove('on'); if(ACT._released) ACT._released(h); });
+app.addEventListener('pointerdown', holdOn);
+document.addEventListener('pointerup', holdOff);
+document.addEventListener('pointercancel', holdOff);
+app.addEventListener('contextmenu', e => { if(e.target.closest('.hold')) e.preventDefault(); });
+app.addEventListener('keydown', e => {
+  if(e.key === 'Enter' && e.target && e.target.id === 'ci' && ACT.tap){ e.preventDefault(); ACT.tap(); return; } if((e.key === ' ' || e.key === 'Enter') && e.target.closest && e.target.closest('.hold')){ e.preventDefault(); holdOn(e); } });
+app.addEventListener('keyup', e => { if(e.key === ' ' || e.key === 'Enter') holdOff(); });
+
+function toast(msg){
+  const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; t.setAttribute('role', 'status');
+  document.body.appendChild(t); setTimeout(() => t.remove(), 2200);
+}
+
+/* suara */
+let AC = null;
+function audioUnlock(){ try{ if(!AC) AC = new (window.AudioContext || window.webkitAudioContext)(); if(AC.state === 'suspended') AC.resume(); }catch(e){} }
+function beep(freq = 700, dur = 0.06, vol = 0.12){
+  if(!prefs.sound || !AC) return;
+  try{ const o = AC.createOscillator(), g = AC.createGain(); o.type = 'square'; o.frequency.value = freq; g.gain.value = vol;
+    o.connect(g); g.connect(AC.destination); o.start(); g.gain.exponentialRampToValueAtTime(0.0001, AC.currentTime + dur); o.stop(AC.currentTime + dur + 0.02); }catch(e){}
+}
+function boomSound(){
+  if(!prefs.sound || !AC) return;
+  try{ const len = AC.sampleRate * 0.9, b = AC.createBuffer(1, len, AC.sampleRate), d = b.getChannelData(0);
+    for(let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.2);
+    const s = AC.createBufferSource(), g = AC.createGain(); g.gain.value = 0.5; s.buffer = b; s.connect(g); g.connect(AC.destination); s.start(); }catch(e){}
+}
+function buzz(p){ if(prefs.vibrate && navigator.vibrate) try{ navigator.vibrate(p); }catch(e){} }
+
+/* kamera */
+function canvasFromImage(img, max = 640){
+  const w = img.videoWidth || img.naturalWidth || img.width, h = img.videoHeight || img.naturalHeight || img.height;
+  const k = Math.min(1, max / Math.max(w, h)); const c = document.createElement('canvas');
+  c.width = Math.max(1, Math.round(w * k)); c.height = Math.max(1, Math.round(h * k));
+  c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); return c;
+}
+function fileToCanvas(file){
+  return new Promise((res, rej) => { const u = URL.createObjectURL(file), im = new Image();
+    im.onload = () => { const c = canvasFromImage(im); URL.revokeObjectURL(u); res(c); }; im.onerror = () => rej(new Error('gambar')); im.src = u; });
+}
+/* ambil foto lewat pratinjau kamera; cadangannya pilih file/kamera bawaan HP */
+function takePhoto(facing = 'environment', title = 'Foto'){
+  return new Promise(resolve => {
+    const ov = document.createElement('div'); ov.className = 'overlay'; ov.setAttribute('role', 'dialog');
+    ov.innerHTML = `<h3>${esc(title)}</h3><video playsinline muted></video><p class="mute small center" id="camMsg"></p>
+      <div class="row" style="width:100%;max-width:420px"><button class="btn" id="camShot">Ambil foto</button><button class="btn alt" id="camCancel">Batal</button></div>
+      <label class="btn alt center" style="max-width:420px">Pilih dari HP<input type="file" accept="image/*" capture="${facing === 'user' ? 'user' : 'environment'}" id="camFile" hidden></label>`;
+    document.body.appendChild(ov);
+    const v = ov.querySelector('video'), msg = ov.querySelector('#camMsg'); let stream = null;
+    const done = c => { if(stream) stream.getTracks().forEach(t => t.stop()); ov.remove(); resolve(c); };
+    ov.querySelector('#camCancel').onclick = () => done(null);
+    ov.querySelector('#camFile').onchange = async e => { const f = e.target.files[0]; if(!f) return; try{ done(await fileToCanvas(f)); }catch(err){ msg.textContent = 'Gambar tidak bisa dibaca.'; } };
+    const shot = ov.querySelector('#camShot'); shot.disabled = true;
+    shot.onclick = () => done(canvasFromImage(v));
+    if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
+      navigator.mediaDevices.getUserMedia({video: {facingMode: facing}, audio: false}).then(s => { stream = s; v.srcObject = s; v.play(); shot.disabled = false; })
+        .catch(() => { msg.textContent = 'Kamera tidak bisa dibuka di sini. Pakai tombol "Pilih dari HP".'; v.hidden = true; });
+    } else { msg.textContent = 'Kamera langsung tidak tersedia. Pakai tombol "Pilih dari HP".'; v.hidden = true; }
+  });
+}
+function avgColor(canvas){
+  const w = canvas.width, h = canvas.height, sw = Math.max(1, Math.round(w * 0.3)), sh = Math.max(1, Math.round(h * 0.3));
+  const d = canvas.getContext('2d').getImageData(Math.round((w - sw) / 2), Math.round((h - sh) / 2), sw, sh).data;
+  let r = 0, g = 0, b = 0, n = d.length / 4; for(let i = 0; i < d.length; i += 4){ r += d[i]; g += d[i+1]; b += d[i+2]; }
+  return [Math.round(r / n), Math.round(g / n), Math.round(b / n)];
+}
+
+/* warna */
+function hsb2rgb(h, s, b){ s /= 100; b /= 100; const k = n => (n + h / 60) % 6; const f = n => b * (1 - s * Math.max(0, Math.min(k(n), 4 - k(n), 1))); return [f(5), f(3), f(1)].map(x => Math.round(x * 255)); }
+function rgb2lab(r, g, b){
+  const lin = c => { c /= 255; return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
+  const R = lin(r), G = lin(g), B = lin(b);
+  let x = (R * 0.4124 + G * 0.3576 + B * 0.1805) / 0.95047, y = (R * 0.2126 + G * 0.7152 + B * 0.0722), z = (R * 0.0193 + G * 0.1192 + B * 0.9505) / 1.08883;
+  const f = t => t > 0.008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116; x = f(x); y = f(y); z = f(z);
+  return [116 * y - 16, 500 * (x - y), 200 * (y - z)];
+}
+function colorScore(a, b){ const A = rgb2lab(...a), B = rgb2lab(...b); const d = Math.hypot(A[0]-B[0], A[1]-B[1], A[2]-B[2]); return Math.max(0, Math.round(100 - d * 1.1)); }
+const css = c => `rgb(${c[0]},${c[1]},${c[2]})`;
+function randomTarget(){ const h = rnd(360), s = 40 + rnd(61), b = 35 + rnd(61); return {h, s, b, rgb: hsb2rgb(h, s, b)}; }
+
+/* kenangan (IndexedDB, cadangan memori) */
+const MEM = (() => {
+  let db = null, fallback = [];
+  const open = () => new Promise((res, rej) => {
+    if(db) return res(db);
+    try{ const r = indexedDB.open('pestahp', 1); r.onupgradeneeded = () => r.result.createObjectStore('mem', {keyPath: 'id', autoIncrement: true});
+      r.onsuccess = () => { db = r.result; res(db); }; r.onerror = () => rej(r.error); }catch(e){ rej(e); }
+  });
+  const tx = (mode, fn) => open().then(d => new Promise((res, rej) => { const t = d.transaction('mem', mode), s = t.objectStore('mem'); const rq = fn(s); t.oncomplete = () => res(rq && rq.result); t.onerror = () => rej(t.error); }));
+  return {
+    add: rec => { try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); }catch(e){} return tx('readwrite', s => s.add(rec)).catch(() => { rec.id = Date.now() + Math.random(); fallback.push(rec); }); },
+    all: () => tx('readonly', s => s.getAll()).then(r => r || []).catch(() => fallback.slice()),
+    del: id => tx('readwrite', s => s.delete(id)).catch(() => { fallback = fallback.filter(x => x.id !== id); }),
+    clear: () => tx('readwrite', s => s.clear()).catch(() => { fallback = []; })
+  };
+})();
+const saveMemory = (canvas, game, note) => MEM.add({t: Date.now(), game, note: note || '', img: canvas.toDataURL('image/jpeg', 0.72)});
+
+/* editor daftar pemain yang dipasang di dalam layar */
+function mountPlayers(el, opts = {}){
+  const min = opts.min || 0, max = opts.max || 20;
+  const draw = () => {
+    el.innerHTML = `<div class="chips">${players.map((p, i) => `<span class="chip">${esc(p)}<button class="x" data-i="${i}" aria-label="Hapus ${esc(p)}">×</button></span>`).join('') || '<span class="mute small">Belum ada pemain.</span>'}</div>
+      <form class="row" style="flex-wrap:nowrap"><input type="text" maxlength="16" placeholder="Nama pemain" aria-label="Nama pemain" autocomplete="off"><button class="btn" style="width:auto;flex:none" type="submit">Tambah</button></form>
+      ${players.length < min ? `<p class="small" style="color:var(--sun)">Butuh minimal ${min} pemain.</p>` : ''}`;
+    el.querySelectorAll('.x').forEach(b => b.onclick = () => { players.splice(+b.dataset.i, 1); savePlayers(); draw(); opts.onChange && opts.onChange(); });
+    el.querySelector('form').onsubmit = e => { e.preventDefault(); const inp = el.querySelector('input'); const v = inp.value.trim();
+      if(!v) return; if(players.length >= max) return toast('Maksimal ' + max + ' pemain');
+      if(players.some(p => p.toLowerCase() === v.toLowerCase())) return toast('Nama itu sudah ada');
+      players.push(v); savePlayers(); draw(); opts.onChange && opts.onChange(); el.querySelector('input').focus(); };
+  };
+  draw();
+}
+const playersBlock = (title = 'Pemain') => `<div class="card"><div class="label">${esc(title)}</div><div id="pl"></div></div>`;
+
+/* ===== Beranda, pengaturan, kenangan ===== */
+const OPEN = {};
+function home(){
+  nav.length = 0; nav.push(home);
+  const g = (id, c, t, d, tag, wide) => `<button class="game${wide ? ' wide' : ''}" style="--c:var(${c})" data-a="open" data-id="${id}"><b>${t}</b><span>${d}</span><i>${tag}</i></button>`;
+  view(`
+    <div class="bar" style="justify-content:space-between;padding-right:0"><div class="logo">Pesta<span>HP</span></div><button class="ib" data-a="settings" aria-label="Pengaturan">⚙</button></div>
+    <button class="chip" data-a="settings" style="width:100%;justify-content:space-between"><span>Pemain: ${players.length ? esc(players.join(', ')) : 'belum diisi'}</span><b>ubah</b></button>
+    <div class="group"><div class="label">Cari yang menyamar</div>
+      <div class="grid">${g('imposter', '--coral', 'Imposter', 'Semua tahu kata rahasia. Kecuali satu orang. Satu HP dioper bergantian.', '3-20 pemain', true)}</div></div>
+    <div class="group"><div class="label">Pakai kamera dan suara</div>
+      <div class="grid">
+        ${g('warna', '--mint', 'Cari Warna', 'Ingat warna, cari bendanya, foto, dinilai.', '2+ pemain')}
+        ${g('suara', '--grape', 'Suara Terbalik', 'Ucapkan, dengar dibalik, tirukan, tebak.', '2+ pemain')}
+        ${g('selfie', '--tang', 'Bom Selfie', 'Bom meledak, wajah kalah terfoto.', '2+ pemain')}
+        ${g('ingat', '--sky', 'Ingat Warna', 'Hafalkan lalu racik ulang warnanya.', '1+ pemain')}</div></div>
+    <div class="group"><div class="label">Oper HP, jangan sampai meledak</div>
+      <div class="grid">
+        ${g('bom', '--coral', 'Bom Oper', 'Siapa paling mungkin...? Tunjuk lalu oper.', '2+ pemain')}
+        ${g('td', '--sun', 'Jujur atau Tantang', 'Pilih jujur atau tantangan.', '2+ pemain')}
+        ${g('sebut3', '--mint', 'Sebut 3', 'Sebut tiga jawaban cepat.', '2+ pemain')}
+        ${g('peragakan', '--sky', 'Peragakan', 'Tebak gaya tanpa bicara.', '2+ pemain')}
+        ${g('satulagi', '--tang', 'Satu Lagi', 'Tambah jawaban, jangan mengulang.', '2+ pemain')}
+        ${g('acak', '--grape', 'Acak Pesta', 'Campuran semua tantangan.', '2+ pemain')}</div></div>
+    <div class="group"><div class="label">Tanpa bom</div>
+      <div class="grid">
+        ${g('waktu', '--sun', 'Tepat Waktu', 'Berhenti pas di detik target, tanpa lihat.', '1+ pemain')}
+        ${g('angka', '--mint', 'Tebak Angka', 'HP di dahi, tanya jawab ya/tidak.', '2+ pemain')}
+        ${g('kenangan', '--surface2', 'Kenangan', 'Foto-foto momen dari permainan.', 'Album')}</div></div>
+  `, {
+    open: el => OPEN[el.dataset.id](),
+    settings: () => go(settings)
+  });
+  document.querySelectorAll('.game[style*="--surface2"]').forEach(b => { b.style.color = 'var(--ink)'; });
+}
+
+function settings(){
+  view(topbar('Pengaturan') + playersBlock('Pemain (dipakai semua game)') + `
+    <div class="card"><div class="label">Hukuman saat bom meledak</div><p class="small mute">Satu per baris. Dipilih acak oleh aplikasi.</p>
+      <textarea id="pen" aria-label="Daftar hukuman">${esc(penalties.join('\n'))}</textarea>
+      <button class="btn alt" data-a="savePen">Simpan hukuman</button><button class="btn alt" data-a="resetPen">Kembalikan bawaan</button></div>
+    <div class="card"><div class="label">Suara dan getar</div>
+      <label class="row" style="align-items:center"><span>Efek suara</span><input type="checkbox" id="snd" ${prefs.sound ? 'checked' : ''} style="flex:none;width:26px;height:26px"></label>
+      <label class="row" style="align-items:center"><span>Getar saat meledak</span><input type="checkbox" id="vib" ${prefs.vibrate ? 'checked' : ''} style="flex:none;width:26px;height:26px"></label>
+      <label class="row" style="align-items:center"><span>Mode ramah anak (sembunyikan soal pribadi)</span><input type="checkbox" id="kid" ${prefs.kid ? 'checked' : ''} style="flex:none;width:26px;height:26px"></label></div>
+    ${geminiCard()}
+    <div class="card"><div class="label">Data</div><button class="btn alt" data-a="wipe">Hapus semua data PestaHP</button><p class="small mute" id="wipeMsg"></p></div>
+  `, {
+    _mount(){
+      mountPlayers(app.querySelector('#pl'));
+      app.querySelector('#snd').onchange = e => { prefs.sound = e.target.checked; store.set('prefs', prefs); };
+      app.querySelector('#vib').onchange = e => { prefs.vibrate = e.target.checked; store.set('prefs', prefs); };
+      app.querySelector('#kid').onchange = e => { prefs.kid = e.target.checked; store.set('prefs', prefs); };
+      geminiMount();
+    },
+    savePen(){ const l = app.querySelector('#pen').value.split('\n').map(s => s.trim()).filter(Boolean); if(!l.length) return toast('Isi minimal satu hukuman'); penalties = l; store.set('penalties', l); toast('Tersimpan'); },
+    resetPen(){ penalties = DEFAULT_PENALTIES.slice(); store.set('penalties', penalties); app.querySelector('#pen').value = penalties.join('\n'); toast('Dikembalikan'); },
+    wipe(el){
+      if(el.dataset.sure !== '1'){ el.dataset.sure = '1'; el.textContent = 'Ketuk sekali lagi untuk menghapus'; return; }
+      try{ Object.keys(localStorage).filter(k => k.startsWith('pestahp.')).forEach(k => localStorage.removeItem(k)); }catch(e){}
+      MEM.clear().then(() => { gen = {cats: {}, pools: {}}; players = []; penalties = DEFAULT_PENALTIES.slice(); prefs = {sound: true, vibrate: true}; toast('Semua data dihapus'); home(); });
+    }
+  });
+}
+
+OPEN.kenangan = () => go(memories);
+function memories(){
+  view(topbar('Kenangan') + '<p class="mute small">Foto dari Cari Warna dan Bom Selfie tersimpan di HP ini saja.</p><p class="mute small" id="pst"></p><div id="mm" class="photos"></div><p id="mmEmpty" class="mute center" hidden>Belum ada foto. Mainkan Cari Warna atau Bom Selfie.</p><button class="btn alt" data-a="clr" id="clr" hidden>Hapus semua foto</button>', {
+    _mount(){
+      try{ if(navigator.storage && navigator.storage.persisted) navigator.storage.persisted().then(p => { const e = app.querySelector('#pst'); if(e) e.textContent = p ? 'Penyimpanan foto: permanen.' : 'Penyimpanan foto bisa dihapus browser kalau memori HP penuh. Unduh foto yang penting.'; }); }catch(e){}
+      MEM.all().then(list => {
+      list.sort((a, b) => b.t - a.t); const box = app.querySelector('#mm'); if(!box) return;
+      app.querySelector('#mmEmpty').hidden = list.length > 0; app.querySelector('#clr').hidden = list.length === 0;
+      box.innerHTML = list.map(m => `<button data-a="show" data-id="${m.id}" aria-label="Foto ${esc(m.game)}"><img alt="${esc(m.game)}" src="${m.img}"></button>`).join('');
+      ACT._list = list;
+    }); },
+    show(el){
+      const m = (ACT._list || []).find(x => String(x.id) === el.dataset.id); if(!m) return;
+      const ov = document.createElement('div'); ov.className = 'overlay';
+      ov.innerHTML = `<img class="full" alt="${esc(m.game)}" src="${m.img}"><p>${esc(m.game)}${m.note ? ' · ' + esc(m.note) : ''} · ${new Date(m.t).toLocaleString('id-ID')}</p><div class="row" style="width:100%;max-width:420px"><button class="btn alt" id="ovx">Tutup</button><a class="btn alt" download="pestahp-${m.t}.jpg" href="${m.img}" style="display:flex;align-items:center;justify-content:center;text-decoration:none">Unduh</a><button class="btn coral" id="ovd">Hapus</button></div>`;
+      document.body.appendChild(ov);
+      ov.querySelector('#ovx').onclick = () => ov.remove();
+      ov.querySelector('#ovd').onclick = () => MEM.del(m.id).then(() => { ov.remove(); memories(); });
+    },
+    clr(el){ if(el.dataset.sure !== '1'){ el.dataset.sure = '1'; el.textContent = 'Ketuk lagi untuk menghapus semua'; return; } MEM.clear().then(memories); }
+  });
+}
+
+/* ===== Imposter ===== */
+let IC = Object.assign({cat: 'Acak', variant: 'klasik', n: 1, timer: 120, hint: true, guess: true, showLeft: false}, store.get('imp', {}));
+let scores = {};
+let customCats = store.get('customcats', []);
+let impUsed = {};
+const VARIANTS = {klasik: ['Klasik', 'Imposter tidak dapat kata.'], misterius: ['Misterius', 'Imposter dapat kata yang mirip dan tidak sadar dirinya imposter.'], kacau: ['Kacau', 'Jumlah imposter acak dan dirahasiakan.'], aturan: ['Aturan Sendiri', 'Tanpa kata. Hanya peran dan timer.']};
+OPEN.imposter = () => go(impSetup);
+
+function allCats(){ const o = {}; CAT_KEYS.forEach(k => o[k] = CATS[k].map(s => s.split('|'))); customCats.forEach(c => o[c.name] = c.words.map(w => [w, '', '']));
+  Object.keys(gen.cats).forEach(n => { o[n] = (o[n] || []).concat(gen.cats[n].map(s => s.split('|'))); }); return o; }
+const maxImp = n => Math.max(1, Math.floor((n - 1) / 2));
+
+function impSetup(){
+  const cats = allCats(), names = ['Acak'].concat(Object.keys(cats));
+  view(topbar('Imposter') + playersBlock('Pemain (3 sampai 20)') + `
+    <div class="card"><div class="label">Cara main</div><div class="chips" id="vr">${Object.keys(VARIANTS).map(k => `<button class="chip${IC.variant === k ? ' sel' : ''}" data-a="vr" data-k="${k}">${VARIANTS[k][0]}</button>`).join('')}</div><p class="small mute" id="vd">${VARIANTS[IC.variant][1]}</p></div>
+    <div class="card" id="catCard"><div class="label">Kategori kata</div><div class="chips">${names.map(c => `<button class="chip${IC.cat === c ? ' sel' : ''}" data-a="cat" data-k="${esc(c)}">${esc(c)}</button>`).join('')}</div>
+      <details><summary class="small mute" style="cursor:pointer;min-height:32px">Buat kategori sendiri</summary><div class="list" style="margin-top:8px"><input type="text" id="cn" maxlength="24" placeholder="Nama kategori" aria-label="Nama kategori"><textarea id="cw" placeholder="Satu kata per baris, minimal 6" aria-label="Kata-kata"></textarea><button class="btn alt" data-a="saveCat">Simpan kategori</button></div></details></div>
+    <div class="card"><div class="label">Pengaturan</div>
+      <div class="row" style="align-items:center"><span id="nl">Jumlah imposter</span><div class="stepper" style="flex:none"><button data-a="nm" aria-label="Kurangi imposter">−</button><b id="nv"></b><button data-a="np" aria-label="Tambah imposter">+</button></div></div>
+      <div class="row" style="align-items:center"><span>Timer diskusi</span><select id="tm" aria-label="Timer diskusi" style="flex:none;width:auto">${[0, 60, 120, 180, 300].map(t => `<option value="${t}"${IC.timer === t ? ' selected' : ''}>${t ? fmt(t) : 'Tanpa timer'}</option>`).join('')}</select></div>
+      <label class="row" style="align-items:center" id="hintRow"><span>Imposter dapat petunjuk</span><input type="checkbox" id="hn" ${IC.hint ? 'checked' : ''} style="flex:none;width:26px;height:26px"></label>
+      <label class="row" style="align-items:center" id="gsRow"><span>Imposter yang tertangkap boleh menebak kata</span><input type="checkbox" id="gs" ${IC.guess !== false ? 'checked' : ''} style="flex:none;width:26px;height:26px"></label>
+      <label class="row" style="align-items:center" id="slRow"><span>Umumkan sisa imposter tiap voting</span><input type="checkbox" id="sl2" ${IC.showLeft ? 'checked' : ''} style="flex:none;width:26px;height:26px"></label></div>
+    <button class="btn" id="go" data-a="start">Mulai</button>`, {
+    _mount(){
+      mountPlayers(app.querySelector('#pl'), {min: 3, max: 20, onChange: upd});
+      app.querySelector('#tm').onchange = e => { IC.timer = +e.target.value; store.set('imp', IC); };
+      app.querySelector('#hn').onchange = e => { IC.hint = e.target.checked; store.set('imp', IC); };
+      app.querySelector('#gs').onchange = e => { IC.guess = e.target.checked; store.set('imp', IC); };
+      app.querySelector('#sl2').onchange = e => { IC.showLeft = e.target.checked; store.set('imp', IC); };
+      upd();
+    },
+    vr(el){ IC.variant = el.dataset.k; store.set('imp', IC); impSetup(); },
+    cat(el){ IC.cat = el.dataset.k; store.set('imp', IC); impSetup(); },
+    saveCat(){
+      const n = app.querySelector('#cn').value.trim(), w = app.querySelector('#cw').value.split('\n').map(s => s.trim()).filter(Boolean);
+      if(!n) return toast('Beri nama kategori'); if(w.length < 6) return toast('Isi minimal 6 kata');
+      if(CATS[n]) return toast('Nama itu dipakai kategori bawaan');
+      customCats = customCats.filter(c => c.name !== n).concat([{name: n, words: w}]); store.set('customcats', customCats); IC.cat = n; store.set('imp', IC); impSetup();
+    },
+    nm(){ IC.n = Math.max(1, IC.n - 1); store.set('imp', IC); upd(); },
+    np(){ IC.n = Math.min(maxImp(Math.max(players.length, 3)), IC.n + 1); store.set('imp', IC); upd(); },
+    start(){ if(players.length < 3) return; impStart(); }
+  });
+  function upd(){
+    const nv = app.querySelector('#nv'); if(!nv) return;
+    const lim = maxImp(Math.max(players.length, 3)); if(IC.n > lim) IC.n = lim;
+    nv.textContent = IC.variant === 'kacau' ? '?' : IC.n;
+    app.querySelector('#hintRow').hidden = IC.variant !== 'klasik';
+    app.querySelector('#gsRow').hidden = !(IC.variant === 'klasik' || IC.variant === 'kacau');
+    app.querySelector('#slRow').hidden = IC.variant !== 'kacau';
+    app.querySelector('#catCard').hidden = IC.variant === 'aturan';
+    app.querySelector('#go').disabled = players.length < 3;
+  }
+}
+
+let G = null;
+function impStart(){
+  const cats = allCats(), n = players.length;
+  const k = IC.variant === 'kacau' ? 1 + rnd(maxImp(n)) : Math.min(IC.n, maxImp(n));
+  const imp = new Set(shuffle([...Array(n).keys()]).slice(0, k));
+  let word = null, hint = '', fake = '';
+  if(IC.variant !== 'aturan'){
+    let keys = IC.cat === 'Acak' || !cats[IC.cat] ? Object.keys(cats) : [IC.cat];
+    const pool = []; keys.forEach(c => cats[c].forEach(e => pool.push({c, e})));
+    const used = impUsed[IC.cat] || (impUsed[IC.cat] = new Set());
+    let fresh = pool.filter(p => !used.has(p.e[0])); if(!fresh.length){ used.clear(); fresh = pool; }
+    const ch = pick(fresh); used.add(ch.e[0]); word = ch.e[0]; hint = ch.e[1];
+    fake = ch.e[2] || pick(cats[ch.c].filter(e => e[0] !== word))[0];
+  }
+  G = {n, k, imp, word, hint, fake, names: players.slice(), alive: players.map((_, i) => i), idx: 0, shown: false, log: []};
+  impReveal();
+}
+function roleCard(i){
+  const isImp = G.imp.has(i);
+  if(IC.variant === 'aturan') return isImp ? `<span class="tag" style="--c:var(--coral)">IMPOSTER</span><div class="big">Kamu imposter</div>` : `<span class="tag" style="--c:var(--mint)">WARGA</span><div class="big">Kamu warga</div>`;
+  if(isImp && IC.variant === 'klasik') return `<span class="tag" style="--c:var(--coral)">IMPOSTER</span><div class="big">Kamu tidak dapat kata</div>${IC.hint && G.hint ? `<p>Petunjuk: ${esc(G.hint)}</p>` : ''}`;
+  const w = isImp && IC.variant === 'misterius' ? G.fake : G.word;
+  return `<span class="tag" style="--c:var(--sun)">KATA RAHASIA</span><div class="big">${esc(w)}</div>`;
+}
+function impReveal(){
+  const i = G.idx, last = i === G.n - 1;
+  view(topbar('Lihat peran', `<span class="mute small">${i + 1}/${G.n}</span>`) + `
+    <div class="stage"><p class="mute">Giliran</p><h1>${esc(G.names[i])}</h1><p class="mute small">Pastikan hanya kamu yang melihat layar.</p>
+      <div class="secret hold" tabindex="0" role="button" aria-label="Tahan untuk melihat peranmu"><div class="on-hide big">Tahan untuk melihat</div><div class="on-show" style="flex-direction:column;align-items:center;gap:10px">${roleCard(i)}</div></div></div>
+    <button class="btn" id="nx" data-a="next" disabled>${last ? 'Semua sudah lihat, mulai' : 'Sudah, oper ke berikutnya'}</button>`, {
+    _released(){ const b = app.querySelector('#nx'); if(b) b.disabled = false; },
+    next(){ if(last){ impClues(); } else { G.idx++; impReveal(); } },
+    back(){ nav.length = 1; home(); }
+  });
+}
+function impClues(){
+  const order = shuffle(G.names.map((_, i) => i)); const t0 = IC.timer;
+  view(topbar('Petunjuk dan diskusi') + `
+    <div class="stage"><p class="mute">Yang mulai</p><h1>${esc(G.names[order[0]])}</h1>
+      <p class="mute">Beri satu petunjuk bergantian searah jarum jam. Lalu diskusi.</p>
+      <div class="list" style="width:100%">${order.map((o, j) => `<div class="li"><span class="n">${j + 1}</span><span class="g">${esc(G.names[o])}</span></div>`).join('')}</div>
+      ${t0 ? `<div class="huge" id="tm">${fmt(t0)}</div>` : ''}</div>
+    <button class="btn coral" data-a="vote">Mulai voting</button>`, {
+    _mount(){ if(!t0) return; let left = t0; every(() => { left--; const e = app.querySelector('#tm'); if(e) e.textContent = fmt(left); if(left === 10) beep(900, .1); if(left <= 0){ buzz([200]); beep(500, .4, .2); impVote(); } }, 1000); },
+    vote: impVote
+  });
+}
+function impVote(){
+  const alive = G.alive, imps = alive.filter(i => G.imp.has(i)).length, civ = alive.length - imps;
+  view(topbar('Voting') + `<div class="stage" style="justify-content:flex-start"><h2>Tunjuk bersama: siapa imposternya?</h2><p class="mute small">Ketuk nama yang paling banyak ditunjuk.</p>
+    <div class="list" style="width:100%">${alive.map(i => `<button class="li" data-a="acc" data-i="${i}" style="width:100%;text-align:left;color:inherit"><span class="g">${esc(G.names[i])}</span><span class="mute">pilih</span></button>`).join('')}</div>
+    <p class="mute small">Masih hidup: ${alive.length} orang</p></div>`, {
+    acc(el){ impVerdict(+el.dataset.i); },
+    back(){ impClues(); }
+  });
+}
+function impVerdict(i){
+  const was = G.imp.has(i); G.alive = G.alive.filter(x => x !== i);
+  const imps = G.alive.filter(x => G.imp.has(x)).length, civ = G.alive.length - imps;
+  const civWin = imps === 0, impWin = !civWin && imps >= civ;
+  view(`<div class="stage"><p class="mute">${esc(G.names[i])} ternyata...</p><div class="huge ${was ? '' : 'boom'}" style="color:var(${was ? '--mint' : '--coral'})">${was ? 'IMPOSTER' : 'WARGA'}</div>
+    <p>${civWin ? 'Semua imposter tertangkap.' : impWin ? 'Imposter sudah sama banyak dengan warga.' : was ? 'Masih ada imposter yang bersembunyi.' : 'Salah tunjuk. Imposter masih ada.'}</p>${IC.variant === 'kacau' && IC.showLeft && !civWin && !impWin ? `<p class="mute">Sisa imposter: ${imps}</p>` : ''}</div>
+    <button class="btn ${civWin || impWin ? '' : 'alt'}" data-a="nx">${civWin || impWin ? 'Lihat hasil' : 'Diskusi lagi dan voting'}</button>`, {
+    nx(){
+      if(civWin && IC.guess !== false && G.word && (IC.variant === 'klasik' || IC.variant === 'kacau')) impGuess();
+      else if(civWin || impWin) impEnd(civWin, false);
+      else impVote();
+    },
+    back(){ nav.length = 1; home(); }
+  });
+}
+function impGuess(){
+  view(`<div class="stage"><span class="tag" style="--c:var(--sun)">KESEMPATAN TERAKHIR</span><h1>Imposter tertangkap</h1>
+    <p>Imposter menyebut tebakan kata rahasia dengan lantang. Kalau tebakannya benar, imposter tetap menang.</p>
+    <div class="secret hold" tabindex="0" role="button" aria-label="Tahan untuk memeriksa kata" style="min-height:110px"><div class="on-hide">Tahan untuk memeriksa kata</div><div class="on-show big">${esc(G.word)}</div></div></div>
+    <div class="row"><button class="btn mint" data-a="ok">Tebakan benar</button><button class="btn coral" data-a="no">Tebakan salah</button></div>`, {
+    ok(){ impEnd(false, true); }, no(){ impEnd(true, false); }, back(){ nav.length = 1; home(); }
+  });
+}
+function impEnd(civWin, stolen, noAdd){
+  if(!noAdd) G.names.forEach((nm, i) => {
+    if(civWin && !G.imp.has(i)) scores[nm] = (scores[nm] || 0) + 1;
+    if(!civWin && G.imp.has(i)) scores[nm] = (scores[nm] || 0) + 2;
+  });
+  const rank = Object.keys(scores).filter(n => G.names.includes(n)).sort((a, b) => scores[b] - scores[a]);
+  view(`<div class="stage" style="justify-content:flex-start"><span class="tag" style="--c:var(${civWin ? '--mint' : '--coral'})">${civWin ? 'WARGA MENANG' : 'IMPOSTER MENANG'}</span>
+    <h1>${civWin ? 'Imposter ketahuan' : stolen ? 'Imposter menebak kata' : 'Imposter lolos'}</h1>
+    ${G.word ? `<p>Kata rahasia: <b>${esc(G.word)}</b>${IC.variant === 'misterius' ? `<br>Kata imposter: <b>${esc(G.fake)}</b>` : ''}</p>` : ''}
+    <p class="mute small">Ada ${G.k} imposter${IC.variant === 'kacau' ? ' (dirahasiakan sampai sekarang)' : ''}.</p>
+    <div class="list" style="width:100%">${G.names.map((nm, i) => `<div class="li"><span class="g">${esc(nm)}</span><span class="tag" style="--c:var(${G.imp.has(i) ? '--coral' : '--mint'})">${G.imp.has(i) ? 'Imposter' : 'Warga'}</span></div>`).join('')}</div>
+    <div class="card" style="width:100%;text-align:left"><div class="label">Skor (warga menang +1, imposter menang +2)</div>
+      ${rank.map((n, i) => `<div class="li"><span class="n">${i + 1}</span><span class="g">${esc(n)}</span><b>${scores[n]}</b></div>`).join('')}
+      <button class="btn alt" data-a="resetScore">Nolkan skor</button></div></div>
+    <button class="btn" data-a="again">Main lagi dengan pemain yang sama</button><button class="btn alt" data-a="setup">Ubah pengaturan</button><button class="btn alt" data-a="home">Ke beranda</button>`, {
+    again: impStart, setup(){ nav.length = 1; go(impSetup); }, home(){ nav.length = 1; home(); }, back(){ nav.length = 1; home(); },
+    resetScore(){ scores = {}; impEnd.call(null, civWin, stolen, true); }
+  });
+}
+
+/* ===== Mesin bom: oper HP sebelum meledak ===== */
+const BOMBS = {
+  bom:       {title: 'Bom Oper', c: '--coral', intro: 'Ketuk layar, baca soalnya, tunjuk orang yang paling cocok, lalu oper HP. Jangan sampai bom meledak di tanganmu.', kind: 'prompt', pool: () => poolOf('who').map(t => 'Siapa yang ' + t + '?')},
+  sebut3:    {title: 'Sebut 3', c: '--mint', intro: 'Ketuk, baca topiknya, sebut tiga jawaban, lalu oper HP. Dua atau empat jawaban tidak dihitung.', kind: 'prompt', pool: () => poolOf('topic3')},
+  peragakan: {title: 'Peragakan', c: '--sky', intro: 'Ketuk, lihat kata, peragakan tanpa bersuara. Kalau sudah tertebak, oper HP.', kind: 'act', pool: () => poolOf('act')},
+  satulagi:  {title: 'Satu Lagi', c: '--tang', intro: 'Topik tetap sama. Tiap pemain menambah satu jawaban baru ke rantai tanpa mengulang. Setelah menyebut, oper HP.', kind: 'chain', pool: () => poolOf('onemore')},
+  td:        {title: 'Jujur atau Tantang', c: '--sun', intro: 'Pegang HP, pilih jujur atau tantang, lakukan, lalu oper HP.', kind: 'td', pool: () => poolOf('truth')},
+  selfie:    {title: 'Bom Selfie', c: '--tang', intro: 'Seperti Bom Oper. Kalau meledak, kamera depan memotret wajah yang kalah dan fotonya masuk Kenangan.', kind: 'prompt', cam: true, pool: () => poolOf('selfie')},
+  acak:      {title: 'Acak Pesta', c: '--grape', intro: 'Tiap ketukan memberi tantangan acak dari semua jenis. Baca, lakukan, oper.', kind: 'mix', pool: () => []}
+};
+const BOMB_LEN = {pendek: [15, 30], sedang: [25, 55], panjang: [45, 90]};
+let bombLen = 'sedang';
+Object.keys(BOMBS).forEach(id => OPEN[id] = () => go(() => bombReady(id)));
+
+function bombReady(id){
+  const g = BOMBS[id];
+  view(topbar(g.title) + `<div class="card"><p>${esc(g.intro)}</p></div>${playersBlock('Pemain (2 atau lebih)')}
+    <div class="card"><div class="label">Panjang sumbu bom</div><div class="chips">${Object.keys(BOMB_LEN).map(k => `<button class="chip${bombLen === k ? ' sel' : ''}" data-a="len" data-k="${k}">${k[0].toUpperCase() + k.slice(1)}</button>`).join('')}</div></div>
+    ${id === 'satulagi' ? `<label class="card" style="flex-direction:row;align-items:center;justify-content:space-between"><span>Catat jawaban dengan mengetik<br><span class="small mute">Aplikasi mengecek jawaban yang diulang. Kalau diulang, bom langsung meledak.</span></span><input type="checkbox" id="log" style="width:26px;height:26px"></label>` : ''}
+    ${g.cam ? `<label class="card" style="flex-direction:row;align-items:center;justify-content:space-between"><span>Foto wajah yang kalah<br><span class="small mute">Butuh izin kamera depan. Foto hanya disimpan di HP ini.</span></span><input type="checkbox" id="cam" checked style="width:26px;height:26px"></label>` : ''}
+    <button class="btn" id="go" data-a="go" ${players.length < 2 ? 'disabled' : ''}>Nyalakan bom</button>`, {
+    _mount(){ mountPlayers(app.querySelector('#pl'), {min: 2, max: 20, onChange: () => { app.querySelector('#go').disabled = players.length < 2; }}); },
+    len(el){ bombLen = el.dataset.k; app.querySelectorAll('[data-a=len]').forEach(b => b.classList.toggle('sel', b === el)); },
+    async go(){
+      const cam = g.cam && app.querySelector('#cam') && app.querySelector('#cam').checked;
+      let video = null;
+      if(cam){ video = await openFrontCam(); if(!video) toast('Kamera tidak aktif, bom tetap jalan tanpa foto'); }
+      bombPlay(id, video, {log: id === 'satulagi' && app.querySelector('#log') && app.querySelector('#log').checked});
+    }
+  });
+}
+function openFrontCam(){
+  if(!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) return Promise.resolve(null);
+  return navigator.mediaDevices.getUserMedia({video: {facingMode: 'user'}, audio: false}).then(s => {
+    const v = document.createElement('video'); v.playsInline = true; v.muted = true; v.srcObject = s; v.style.cssText = 'position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;left:0;top:0';
+    document.body.appendChild(v); return v.play().then(() => { v._s = s; return v; });
+  }).catch(() => null);
+}
+const closeCam = v => { if(v){ try{ v._s.getTracks().forEach(t => t.stop()); }catch(e){} v.remove(); } };
+
+let losses = {};
+function bombPlay(id, cam, opts){
+  opts = opts || {}; const logOn = !!opts.log, used = new Set(); let reason = '';
+  const g = BOMBS[id]; const [a, b] = BOMB_LEN[bombLen]; const total = a + rnd(b - a + 1);
+  const t0 = performance.now(); let n = 0, exploded = false, cur = null, chain = 0, tdMode = 'choose', last = '';
+  const pool = shuffle(g.pool()); let pi = 0;
+  const nextPrompt = () => { if(g.kind === 'mix') return pick([() => 'Siapa yang ' + pick(poolOf('who')) + '?', () => pick(poolOf('truth')), () => pick(poolOf('dare')), () => pick(poolOf('topic3')), () => 'Peragakan: ' + pick(poolOf('act'))])(); const t = pool[pi % pool.length]; pi++; return t; };
+  onLeave(() => closeCam(cam));
+  const draw = () => {
+    let body;
+    if(g.kind === 'td' && tdMode === 'choose') body = `<div class="big">Pilih</div><div class="row" style="width:100%"><button class="btn mint" data-a="truth">Jujur</button><button class="btn coral" data-a="dare">Tantang</button></div>`;
+    else if(g.kind === 'chain') body = `<span class="tag" style="--c:var(${g.c})">Topik</span><div class="big">${esc(cur || '...')}</div><p class="mute">Rantai sudah ${chain} jawaban</p>${logOn && used.size ? `<p class="mute small">${[...used].slice(-6).map(esc).join(', ')}</p>` : ''}${logOn ? '<input type="text" id="ci" placeholder="Ketik jawabanmu" autocomplete="off" aria-label="Jawaban">' : ''}<button class="btn" data-a="tap">Sudah menyebut, oper</button><button class="btn alt" data-a="topic">Ganti topik</button>`;
+    else if(g.kind === 'td') body = `<span class="tag" style="--c:var(${g.c})">${esc(last)}</span><div class="big">${esc(cur)}</div><button class="btn" data-a="tap">Selesai, oper</button>`;
+    else if(g.kind === 'act') body = n ? `<div class="big">${esc(cur)}</div><p class="mute">Peragakan tanpa bersuara</p><button class="btn" data-a="tap">Tertebak, kata berikutnya</button>` : `<div class="big">Ketuk untuk mulai</div>`;
+    else body = n ? `<div class="big">${esc(cur)}</div><p class="mute">Lalu oper HP</p>` : `<div class="big">Ketuk layar untuk soal pertama</div>`;
+    const zone = (g.kind === 'prompt' || g.kind === 'mix' || (g.kind === 'act' && !n));
+    return `<div class="${zone ? 'tapzone' : 'tapzone'}"${zone ? ' data-a="tap" role="button" tabindex="0"' : ''}>${body}</div>`;
+  };
+  view(`<div class="bar"><h2>${esc(g.title)}</h2><span class="mute small" id="cnt">soal ${n}</span></div><div id="zone" style="display:flex;flex:1;flex-direction:column">${draw()}</div><p class="mute small center">Bom bisa meledak kapan saja.</p>`, {
+    _mount(){
+      let tick = 0;
+      every(() => {
+        if(exploded) return; const el = (performance.now() - t0) / 1000, frac = el / total;
+        if(el >= total) return boom();
+        const gap = Math.max(0.12, 1 - frac * 0.9); tick += 0.1; if(tick >= gap){ tick = 0; beep(frac > .7 ? 1100 : 760, 0.04, 0.1); }
+      }, 100);
+    },
+    tap(){
+      if(exploded) return;
+      if(g.kind === 'chain' && logOn){
+        const ci = app.querySelector('#ci'), v = ((ci && ci.value) || '').trim().toLowerCase();
+        if(!v) return toast('Ketik jawabannya dulu');
+        if(used.has(v)){ reason = 'Jawaban diulang: ' + v; return boom(); }
+        used.add(v);
+      }
+      n++; if(g.kind === 'chain'){ chain++; if(!cur) cur = nextPrompt(); } else { cur = nextPrompt(); if(g.kind === 'td') tdMode = 'choose'; } z(); },
+    topic(){ cur = nextPrompt(); chain = 0; used.clear(); z(); },
+    truth(){ cur = pick(poolOf('truth')); last = 'Jujur'; tdMode = 'show'; n++; z(); },
+    dare(){ cur = pick(poolOf('dare')); last = 'Tantang'; tdMode = 'show'; n++; z(); },
+    back(){ exploded = true; nav.pop(); (nav[nav.length - 1] || home)(); }
+  });
+  if(g.kind === 'chain'){ cur = nextPrompt(); const zz = app.querySelector('#zone'); if(zz) zz.innerHTML = draw(); }
+  function z(){ const zz = app.querySelector('#zone'); if(zz) zz.innerHTML = draw(); const ci = app.querySelector('#ci'); if(ci) ci.focus(); const c = app.querySelector('#cnt'); if(c) c.textContent = 'soal ' + n; }
+  function boom(){
+    exploded = true; boomSound(); buzz([300, 100, 300]);
+    let photo = null;
+    if(cam){ try{ photo = canvasFromImage(cam, 480); saveMemory(photo, g.title, 'bom meledak'); }catch(e){} closeCam(cam); }
+    bombResult(id, photo, reason);
+  }
+}
+function bombResult(id, photo, reason){
+  const g = BOMBS[id], pen = pick(penalties);
+  view(`<div class="stage boom"><div class="huge" style="color:var(--coral)">DUAR!</div>${reason ? `<p class="mute">${esc(reason)}</p>` : ''}<h2>Siapa yang memegang HP?</h2>
+    <div class="chips" style="justify-content:center">${players.map((p, i) => `<button class="chip" data-a="lose" data-i="${i}">${esc(p)}${losses[p] ? ' · ' + losses[p] : ''}</button>`).join('')}</div>
+    ${photo ? `<img alt="Foto saat bom meledak" src="${photo.toDataURL('image/jpeg', 0.7)}" style="max-width:70%;border-radius:18px">` : ''}
+    <div class="card" style="width:100%"><div class="label">Hukuman</div><p id="pen" style="font-weight:700">${esc(pen)}</p><button class="btn alt" data-a="rep">Ganti hukuman</button></div></div>
+    <button class="btn" data-a="again">Main lagi</button><button class="btn alt" data-a="home">Ke beranda</button>`, {
+    lose(el){ const p = players[+el.dataset.i]; losses[p] = (losses[p] || 0) + 1; el.classList.add('sel'); el.textContent = p + ' · ' + losses[p]; app.querySelectorAll('[data-a=lose]').forEach(b => b.disabled = true); },
+    rep(){ app.querySelector('#pen').textContent = pick(penalties); },
+    again(){ nav.pop(); go(() => bombReady(id)); },
+    home(){ nav.length = 1; home(); }, back(){ nav.length = 1; home(); }
+  });
+}
+
+/* ===== Cari Warna (kamera) ===== */
+OPEN.warna = () => go(huntSetup);
+let huntSecs = 60;
+function huntSetup(){
+  view(topbar('Cari Warna') + `<div class="card"><p>Aplikasi menunjukkan satu warna sebentar. Semua berpencar mencari benda dengan warna paling mirip. Pulang, lalu setiap pemain memotret bendanya dan aplikasi menilai.</p></div>${playersBlock('Pemain (2 atau lebih)')}
+    <div class="card"><div class="label">Waktu berburu</div><div class="chips">${[30, 60, 90, 120].map(s => `<button class="chip${huntSecs === s ? ' sel' : ''}" data-a="secs" data-s="${s}">${s} detik</button>`).join('')}</div></div>
+    <button class="btn" id="go" data-a="go" ${players.length < 2 ? 'disabled' : ''}>Mulai</button>`, {
+    _mount(){ mountPlayers(app.querySelector('#pl'), {min: 2, max: 12, onChange: () => { app.querySelector('#go').disabled = players.length < 2; }}); },
+    secs(el){ huntSecs = +el.dataset.s; app.querySelectorAll('[data-a=secs]').forEach(b => b.classList.toggle('sel', b === el)); },
+    go(){ huntShow(randomTarget()); }
+  });
+}
+function huntShow(t){
+  view(`<div class="stage"><p class="mute">Ingat warna ini</p><div class="swatch" style="background:${css(t.rgb)}" role="img" aria-label="Warna target"></div><div class="huge" id="c">5</div></div>`, {
+    _mount(){ let l = 5; every(() => { l--; const c = app.querySelector('#c'); if(c) c.textContent = l; beep(600, .05); if(l <= 0) huntGo(t); }, 1000); },
+    back(){ nav.pop(); (nav[nav.length - 1] || home)(); }
+  });
+}
+function huntGo(t){
+  let left = huntSecs;
+  view(`<div class="stage"><h2>Cari benda dengan warna itu</h2><div class="huge" id="c">${fmt(left)}</div><p class="mute">Warna sudah disembunyikan. Kembali sebelum waktu habis.</p><button class="btn alt" data-a="skip">Semua sudah kembali</button></div>`, {
+    _mount(){ every(() => { left--; const c = app.querySelector('#c'); if(c) c.textContent = fmt(left); if(left <= 5 && left > 0) beep(900, .08); if(left <= 0){ buzz([300]); beep(500, .5, .2); huntScan(t, 0, []); } }, 1000); },
+    skip(){ huntScan(t, 0, []); }
+  });
+}
+function huntScan(t, i, res){
+  if(i >= players.length) return huntResult(t, res);
+  view(`<div class="stage"><p class="mute">Giliran</p><h1>${esc(players[i])}</h1><p>Foto bendamu. Arahkan kamera sehingga bendanya memenuhi bagian tengah layar.</p></div>
+    <button class="btn" data-a="shot">Buka kamera</button><button class="btn alt" data-a="skip">Tidak membawa benda</button>`, {
+    async shot(){ const c = await takePhoto('environment', players[i] + ': foto bendamu'); if(!c) return; const col = avgColor(c); saveMemory(c, 'Cari Warna', players[i]); huntScan(t, i + 1, res.concat([{name: players[i], col, score: colorScore(col, t.rgb)}])); },
+    skip(){ huntScan(t, i + 1, res.concat([{name: players[i], col: null, score: 0}])); },
+    back(){ nav.length = 1; home(); }
+  });
+}
+function huntResult(t, res){
+  const r = res.slice().sort((a, b) => b.score - a.score);
+  view(`<div class="stage" style="justify-content:flex-start"><span class="tag" style="--c:var(--mint)">PEMENANG</span><h1>${esc(r[0].name)}</h1><p class="mute">Skor 100 berarti warnanya persis sama.</p>
+    <div class="pair"><div class="sw2" style="background:${css(t.rgb)}">Target</div><div class="sw2" style="background:${r[0].col ? css(r[0].col) : 'var(--surface2)'}">${esc(r[0].name)}</div></div>
+    <div class="list" style="width:100%">${r.map((x, i) => `<div class="li"><span class="n">${i + 1}</span><span class="sw" style="background:${x.col ? css(x.col) : 'var(--surface2)'}"></span><span class="g">${esc(x.name)}</span><b>${x.score}</b></div>`).join('')}</div></div>
+    <button class="btn" data-a="again">Main lagi</button><button class="btn alt" data-a="home">Ke beranda</button>`, {
+    again(){ nav.pop(); go(huntSetup); }, home(){ nav.length = 1; home(); }, back(){ nav.length = 1; home(); }
+  });
+}
+
+/* ===== Ingat Warna ===== */
+OPEN.ingat = () => go(matchSetup);
+let matchMode = 'hitung';
+function matchSetup(){
+  view(topbar('Ingat Warna') + `<div class="card"><p>Lihat sebuah warna, lalu warnanya disembunyikan. Racik ulang lewat tiga penggeser: rona, kejenuhan, terang. Makin dekat, makin tinggi skornya.</p></div>${playersBlock('Pemain (1 atau lebih)')}
+    <div class="card"><div class="label">Cara melihat warna</div><div class="chips"><button class="chip${matchMode === 'hitung' ? ' sel' : ''}" data-a="mode" data-m="hitung">Hitung mundur 4 detik</button><button class="chip${matchMode === 'intip' ? ' sel' : ''}" data-a="mode" data-m="intip">Tahan untuk mengintip</button></div></div>
+    <button class="btn" id="go" data-a="go" ${players.length < 1 ? 'disabled' : ''}>Mulai</button>`, {
+    _mount(){ mountPlayers(app.querySelector('#pl'), {min: 1, max: 12, onChange: () => { app.querySelector('#go').disabled = players.length < 1; }}); },
+    mode(el){ matchMode = el.dataset.m; app.querySelectorAll('[data-a=mode]').forEach(b => b.classList.toggle('sel', b === el)); },
+    go(){ matchTurn(0, []); }
+  });
+}
+function matchTurn(i, res){
+  if(i >= players.length) return matchResult(res);
+  const t = randomTarget();
+  view(`<div class="stage"><p class="mute">Giliran</p><h1>${esc(players[i])}</h1><p class="mute">Siap-siap, warnanya akan muncul.</p></div><button class="btn" data-a="show">Tampilkan warna</button>`, {
+    show(){ matchLook(i, res, t); }, back(){ nav.length = 1; home(); }
+  });
+}
+function matchLook(i, res, t){
+  if(matchMode === 'intip'){
+    view(`<div class="stage"><h2>${esc(players[i])}</h2><div class="swatch hold" style="background:var(--surface)" id="sw" tabindex="0" role="button" aria-label="Tahan untuk mengintip"><div class="on-hide big" style="padding:30px">Tahan untuk mengintip</div></div><p class="mute small">Intip sebanyak perlu. Kalau sudah hafal, lanjut.</p></div><button class="btn" data-a="mix">Aku sudah hafal</button>`, {
+      _held(){ const s = app.querySelector('#sw'); if(s) s.style.background = css(t.rgb); }, _released(){ const s = app.querySelector('#sw'); if(s) s.style.background = 'var(--surface)'; },
+      mix(){ matchMix(i, res, t); }, back(){ nav.length = 1; home(); }
+    });
+  } else {
+    view(`<div class="stage"><h2>${esc(players[i])}</h2><div class="swatch" style="background:${css(t.rgb)}"></div><div class="huge" id="c">4</div></div>`, {
+      _mount(){ let l = 4; every(() => { l--; const c = app.querySelector('#c'); if(c) c.textContent = l; if(l <= 0) matchMix(i, res, t); }, 1000); }, back(){ nav.length = 1; home(); }
+    });
+  }
+}
+function matchMix(i, res, t){
+  const v = {h: 180, s: 60, b: 60};
+  const sl = (id, label, max, val) => `<label class="sl"><span class="small mute">${label}</span><input type="range" id="${id}" min="0" max="${max}" value="${val}"></label>`;
+  view(`<div class="stage" style="justify-content:flex-start"><h2>${esc(players[i])}: racik warnanya</h2><div class="swatch" id="pv" style="max-height:26vh"></div>
+    ${sl('h', 'Rona (jenis warna)', 359, v.h)}${sl('s', 'Kejenuhan', 100, v.s)}${sl('b', 'Terang', 100, v.b)}</div><button class="btn" data-a="lock">Kunci jawaban</button>`, {
+    _mount(){ const up = () => { v.h = +app.querySelector('#h').value; v.s = +app.querySelector('#s').value; v.b = +app.querySelector('#b').value; app.querySelector('#pv').style.background = css(hsb2rgb(v.h, v.s, v.b)); };
+      ['h', 's', 'b'].forEach(k => app.querySelector('#' + k).oninput = up); up(); },
+    lock(){ const mine = hsb2rgb(v.h, v.s, v.b); matchReveal(i, res.concat([{name: players[i], mine, target: t.rgb, score: colorScore(mine, t.rgb)}])); },
+    back(){ nav.length = 1; home(); }
+  });
+}
+function matchReveal(i, res){
+  const r = res[res.length - 1];
+  view(`<div class="stage"><h2>${esc(r.name)}</h2><div class="pair"><div class="sw2" style="background:${css(r.target)}">Asli</div><div class="sw2" style="background:${css(r.mine)}">Racikanmu</div></div><div class="huge">${r.score}</div><p class="mute">dari 100</p></div>
+    <button class="btn" data-a="nx">${i + 1 >= players.length ? 'Lihat peringkat' : 'Pemain berikutnya'}</button>`, { nx(){ matchTurn(i + 1, res); }, back(){ nav.length = 1; home(); } });
+}
+function matchResult(res){
+  const r = res.slice().sort((a, b) => b.score - a.score);
+  view(`<div class="stage" style="justify-content:flex-start"><span class="tag" style="--c:var(--sky)">PERINGKAT</span><h1>${esc(r[0].name)} paling jeli</h1>
+    <div class="list" style="width:100%">${r.map((x, i) => `<div class="li"><span class="n">${i + 1}</span><span class="sw" style="background:${css(x.mine)}"></span><span class="g">${esc(x.name)}</span><b>${x.score}</b></div>`).join('')}</div></div>
+    <button class="btn" data-a="again">Main lagi</button><button class="btn alt" data-a="home">Ke beranda</button>`, { again(){ nav.pop(); go(matchSetup); }, home(){ nav.length = 1; home(); }, back(){ nav.length = 1; home(); } });
+}
+
+/* ===== Suara Terbalik (mikrofon) ===== */
+OPEN.suara = () => go(flipSetup);
+let flipMode = 'klasik', flipTeam = [0, 0];
+function flipSetup(){
+  view(topbar('Suara Terbalik') + `<div class="card"><p>Satu orang mengucapkan kata rahasia. Aplikasi memutarnya terbalik. Orang kedua menirukan suara terbalik itu, lalu rekamannya dibalik lagi. Kalau mirip, kata aslinya terdengar. Semua menebak.</p></div>
+    <div class="card"><div class="label">Mode</div><div class="chips">${[['klasik', 'Klasik (ada kata)'], ['tim', 'Tim (hitung skor)'], ['bebas', 'Bebas (tanpa kata)']].map(m => `<button class="chip${flipMode === m[0] ? ' sel' : ''}" data-a="mode" data-m="${m[0]}">${m[1]}</button>`).join('')}</div></div>
+    <p class="small mute" id="mic"></p><button class="btn" data-a="go">Mulai</button>`, {
+    _mount(){ if(!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder)) app.querySelector('#mic').textContent = 'Perekam suara tidak tersedia di halaman ini. Buka PestaHP lewat alamat https (misalnya GitHub Pages) di Chrome.'; },
+    mode(el){ flipMode = el.dataset.m; app.querySelectorAll('[data-a=mode]').forEach(b => b.classList.toggle('sel', b === el)); },
+    go(){ flipTeam = [0, 0]; flipRound(); }
+  });
+}
+async function recStart(){
+  const s = await navigator.mediaDevices.getUserMedia({audio: {echoCancellation: false, noiseSuppression: true, autoGainControl: true}}); const rec = new MediaRecorder(s), ch = [];
+  rec.ondataavailable = e => ch.push(e.data); rec.start();
+  return () => new Promise(res => { rec.onstop = () => { s.getTracks().forEach(t => t.stop()); res(new Blob(ch, {type: rec.mimeType})); }; rec.stop(); });
+}
+/* potong hening di awal/akhir, naikkan volume, lalu balik. Hening di awal rekaman akan jadi jeda di akhir kalau dibalik, jadi harus dibuang. */
+function trimBuf(buf){
+  const ch = buf.numberOfChannels, n = buf.length, d = []; let peak = 0;
+  for(let c = 0; c < ch; c++) d.push(buf.getChannelData(c));
+  const at = i => { let m = 0; for(let c = 0; c < ch; c++){ const v = Math.abs(d[c][i]); if(v > m) m = v; } return m; };
+  for(let i = 0; i < n; i++){ const v = at(i); if(v > peak) peak = v; }
+  if(peak < 0.01) return null;
+  const th = Math.max(0.015, peak * 0.06); let s = 0, e = n - 1;
+  while(s < n && at(s) < th) s++;
+  while(e > s && at(e) < th) e--;
+  const pad = Math.round(buf.sampleRate * 0.05); s = Math.max(0, s - pad); e = Math.min(n - 1, e + pad);
+  const len = e - s + 1; if(len < buf.sampleRate * 0.12) return null;
+  const gain = Math.min(8, 0.9 / peak), out = AC.createBuffer(ch, len, buf.sampleRate);
+  for(let c = 0; c < ch; c++){ const o = out.getChannelData(c); for(let i = 0; i < len; i++) o[i] = d[c][s + i] * gain; }
+  return out;
+}
+async function reversed(blob){
+  audioUnlock(); const raw = await AC.decodeAudioData(await blob.arrayBuffer());
+  const buf = trimBuf(raw); if(!buf) throw new Error('pelan');
+  const rev = AC.createBuffer(buf.numberOfChannels, buf.length, buf.sampleRate);
+  for(let c = 0; c < buf.numberOfChannels; c++){ const a = buf.getChannelData(c), b = rev.getChannelData(c); for(let i = 0; i < a.length; i++) b[i] = a[a.length - 1 - i]; }
+  return {fwd: buf, rev};
+}
+const flipErr = e => e && e.message === 'pelan' ? 'Suara terlalu pelan atau terlalu pendek. Dekatkan HP ke mulut lalu rekam lagi.' : 'Rekaman gagal diproses, coba lagi.';
+function playBuf(b){ audioUnlock(); const s = AC.createBufferSource(); s.buffer = b; s.connect(AC.destination); s.start(); return new Promise(r => { s.onended = r; }); }
+function flipRound(){
+  const word = flipMode === 'bebas' ? null : pick(poolOf('flip'));
+  view(topbar('Giliran pengucap') + `<div class="stage"><p>${word ? 'Pengucap: lihat kata, jangan sampai yang lain melihat.' : 'Pengucap: pikirkan satu kata atau kalimat pendek.'}</p>
+    ${word ? `<div class="secret hold" tabindex="0" role="button" aria-label="Tahan untuk melihat kata"><div class="on-hide big">Tahan untuk melihat kata</div><div class="on-show big">${esc(word)}</div></div>` : ''}
+    <button class="btn coral" id="rec" data-a="rec">● Rekam suaramu</button><p class="small mute" id="st"></p></div>`, flipSay(word));
+}
+function flipSay(word){
+  let stop = null;
+  return {
+    async rec(el){
+      const st = app.querySelector('#st');
+      if(!stop){
+        try{ stop = await recStart(); }catch(e){ st.textContent = 'Mikrofon tidak bisa dibuka. Buka lewat https dan izinkan mikrofon.'; return; }
+        el.textContent = '■ Selesai bicara'; st.textContent = 'Merekam... ucapkan sekarang (maksimal 8 detik).';
+        after(() => { if(stop && el.isConnected) el.click(); }, 8000);
+      } else {
+        const blob = await stop(); stop = null; el.disabled = true; st.textContent = 'Memproses...';
+        try{ const b = await reversed(blob); flipListen(word, b); }catch(e){ st.textContent = flipErr(e); el.disabled = false; el.textContent = '● Rekam suaramu'; }
+      }
+    }
+  };
+}
+function flipListen(word, orig){
+  view(topbar('Dengar versi terbalik') + `<div class="stage"><h2>Dengarkan baik-baik</h2><p class="mute">Orang kedua menirukan suara ini sebisa mungkin.</p><button class="btn sky" data-a="play">▶ Putar suara terbalik</button></div><button class="btn" data-a="mimic">Giliran penirunya</button>`, {
+    play(){ playBuf(orig.rev); }, mimic(){ flipMimic(word, orig); }, back(){ nav.length = 1; home(); }
+  });
+}
+function flipMimic(word, orig){
+  let stop = null, mine = null;
+  view(topbar('Tirukan suaranya') + `<div class="stage"><p>Putar lagi kalau perlu, lalu rekam tirumu.</p><button class="btn sky" data-a="play">▶ Putar suara terbalik</button><button class="btn coral" id="rec" data-a="rec">● Rekam tiruanmu</button><p class="small mute" id="st"></p></div>`, {
+    play(){ playBuf(orig.rev); },
+    async rec(el){
+      const st = app.querySelector('#st');
+      if(!stop){ try{ stop = await recStart(); }catch(e){ st.textContent = 'Mikrofon tidak bisa dibuka.'; return; } el.textContent = '■ Selesai'; st.textContent = 'Merekam... (maksimal 8 detik)'; after(() => { if(stop && el.isConnected) el.click(); }, 8000); }
+      else { const blob = await stop(); stop = null; el.disabled = true; try{ mine = await reversed(blob); flipGuess(word, orig, mine); }catch(e){ st.textContent = flipErr(e); el.disabled = false; el.textContent = '● Rekam tiruanmu'; } }
+    },
+    back(){ nav.length = 1; home(); }
+  });
+}
+function flipGuess(word, orig, mine){
+  view(`<div class="stage"><h2>Ini hasil tiruan, dibalik lagi</h2><p class="mute">Semua menebak: kata apa itu?</p>
+    <button class="btn sky" data-a="pm">▶ Putar tiruan yang dibalik</button><button class="btn alt" data-a="po">▶ Putar ucapan asli</button>
+    <div class="card" style="width:100%"><div class="label">Kata aslinya</div><div class="hold secret" tabindex="0" role="button" style="min-height:90px;padding:12px" aria-label="Tahan untuk melihat jawaban"><div class="on-hide">Tahan untuk melihat</div><div class="on-show big">${word ? esc(word) : 'Tanpa kata, tebak sendiri'}</div></div></div>
+    ${flipMode === 'tim' ? `<div class="row" style="width:100%"><button class="btn mint" data-a="t0">Tim A benar (${flipTeam[0]})</button><button class="btn grape" data-a="t1">Tim B benar (${flipTeam[1]})</button></div>` : ''}</div>
+    <button class="btn" data-a="again">Ronde berikutnya</button><button class="btn alt" data-a="home">Selesai</button>`, {
+    pm(){ playBuf(mine.rev); }, po(){ playBuf(orig.fwd); },
+    t0(el){ flipTeam[0]++; el.textContent = 'Tim A benar (' + flipTeam[0] + ')'; }, t1(el){ flipTeam[1]++; el.textContent = 'Tim B benar (' + flipTeam[1] + ')'; },
+    again(){ flipRound(); }, home(){ nav.length = 1; home(); }, back(){ nav.length = 1; home(); }
+  });
+}
+
+/* ===== Tepat Waktu ===== */
+OPEN.waktu = () => go(timeSetup);
+let timeTarget = 10;
+function timeSetup(){
+  view(topbar('Tepat Waktu') + `<div class="card"><p>Tekan mulai, lalu tekan berhenti saat kamu merasa target waktu sudah lewat. Angka sengaja tidak ditampilkan.</p></div>${playersBlock('Pemain (1 atau lebih)')}
+    <div class="card"><div class="label">Target</div><div class="chips">${[5, 10, 15, 20, 30].map(s => `<button class="chip${timeTarget === s ? ' sel' : ''}" data-a="tg" data-s="${s}">${s} detik</button>`).join('')}</div></div>
+    <button class="btn" id="go" data-a="go" ${players.length < 1 ? 'disabled' : ''}>Mulai</button>`, {
+    _mount(){ mountPlayers(app.querySelector('#pl'), {min: 1, max: 12, onChange: () => { app.querySelector('#go').disabled = players.length < 1; }}); },
+    tg(el){ timeTarget = +el.dataset.s; app.querySelectorAll('[data-a=tg]').forEach(b => b.classList.toggle('sel', b === el)); },
+    go(){ timeTurn(0, []); }
+  });
+}
+function timeTurn(i, res){
+  if(i >= players.length) return timeResult(res);
+  let t0 = null;
+  view(`<div class="stage"><p class="mute">Giliran</p><h1>${esc(players[i])}</h1><p>Target: <b>${timeTarget} detik</b></p>
+    <button class="tapzone" id="b" data-a="tap" style="border:0;color:inherit;font:800 2rem var(--display)">Mulai</button></div>`, {
+    tap(el){
+      if(t0 === null){ t0 = performance.now(); el.textContent = 'Berhenti sekarang!'; el.style.background = 'var(--coral)'; el.style.color = 'var(--on)'; buzz(30); }
+      else { const sec = (performance.now() - t0) / 1000; buzz(30); timeShow(i, res.concat([{name: players[i], sec, diff: Math.abs(sec - timeTarget)}])); }
+    }, back(){ nav.length = 1; home(); }
+  });
+}
+function timeShow(i, res){
+  const r = res[res.length - 1];
+  view(`<div class="stage"><h2>${esc(r.name)}</h2><div class="huge">${r.sec.toFixed(2)}</div><p class="mute">detik · selisih ${r.diff.toFixed(2)} dari ${timeTarget}</p></div><button class="btn" data-a="nx">${i + 1 >= players.length ? 'Lihat peringkat' : 'Pemain berikutnya'}</button>`, { nx(){ timeTurn(i + 1, res); }, back(){ nav.length = 1; home(); } });
+}
+function timeResult(res){
+  const r = res.slice().sort((a, b) => a.diff - b.diff);
+  view(`<div class="stage" style="justify-content:flex-start"><span class="tag" style="--c:var(--sun)">PALING TEPAT</span><h1>${esc(r[0].name)}</h1>
+    <div class="list" style="width:100%">${r.map((x, i) => `<div class="li"><span class="n">${i + 1}</span><span class="g">${esc(x.name)}</span><span class="mute small">${x.sec.toFixed(2)} dtk</span><b>±${x.diff.toFixed(2)}</b></div>`).join('')}</div></div>
+    <button class="btn" data-a="again">Main lagi</button><button class="btn alt" data-a="home">Ke beranda</button>`, { again(){ nav.pop(); go(timeSetup); }, home(){ nav.length = 1; home(); }, back(){ nav.length = 1; home(); } });
+}
+
+/* ===== Tebak Angka ===== */
+OPEN.angka = () => go(numSetup);
+let numMode = 'sedikit';
+const NUM = {
+  sedikit: ['Sedikit (1 sampai 99)', () => String(1 + rnd(99))],
+  banyak: ['Banyak (sampai 1 triliun)', () => { const d = 4 + rnd(9); let s = String(1 + rnd(9)); for(let i = 1; i < d; i++) s += rnd(10); return s.replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }],
+  tahun: ['Tahun (1000 sampai 2100)', () => String(1000 + rnd(1101))],
+  ikonik: ['Angka ikonik', () => pick(IKONIK)]
+};
+function numSetup(){
+  view(topbar('Tebak Angka') + `<div class="card"><p>Taruh HP di dahi dengan layar menghadap teman-temanmu. Mereka tahu angkanya, kamu tidak. Bertanya hanya boleh yang dijawab ya atau tidak.</p></div>
+    <div class="card"><div class="label">Jenis angka</div><div class="chips">${Object.keys(NUM).map(k => `<button class="chip${numMode === k ? ' sel' : ''}" data-a="m" data-k="${k}">${NUM[k][0]}</button>`).join('')}</div></div><button class="btn" data-a="go">Mulai</button>`, {
+    m(el){ numMode = el.dataset.k; app.querySelectorAll('[data-a=m]').forEach(b => b.classList.toggle('sel', b === el)); }, go(){ numShow(); }
+  });
+}
+function numShow(){
+  const n = NUM[numMode][1]();
+  view(`<div class="stage"><p class="mute">Ini angkanya untuk teman-temanmu</p><div class="huge" style="word-break:break-all;font-size:clamp(2.6rem,${n.length > 9 ? 11 : 17}vw,6.5rem)">${esc(n)}</div></div>
+    <button class="btn" data-a="nx">Angka berikutnya</button><button class="btn alt" data-a="back">Selesai</button>`, { nx: numShow, back: numSetup });
+}
+
+/* ===== Isi konten baru dengan Gemini (opsional) =====
+   Kunci API dimasukkan sendiri oleh pemilik HP, disimpan hanya di HP ini, dan dikirim hanya ke Google.
+   Hasilnya disimpan di HP sehingga dipakai juga saat offline. */
+const GEN_TARGETS = {
+  cat:    ['Kata untuk Imposter', 'objek JSON {"kata","petunjuk","mirip"}. kata = benda atau konsep umum (1-3 kata) yang bertema sesuai. petunjuk = frasa pendek (maksimal 6 kata) yang membantu menebak tanpa menyebut kata itu. mirip = kata lain dari tema yang sama yang mirip tetapi jelas berbeda.'],
+  who:    ['Bom Oper (Siapa yang paling...)', 'string lanjutan kalimat "Siapa yang ...", dimulai dengan kata "paling" atau kata kerja, tanpa awalan "Siapa yang" dan tanpa tanda tanya. Contoh: "paling jago masak".'],
+  truth:  ['Jujur', 'string pertanyaan jujur yang ringan dan lucu, aman untuk semua umur.'],
+  dare:   ['Tantang', 'string tantangan singkat yang aman, lucu, dan bisa dilakukan di dalam ruangan tanpa alat khusus.'],
+  topic3: ['Sebut 3', 'string berbentuk "Sebut 3 ..." dengan topik yang mudah dijawab orang Indonesia.'],
+  act:    ['Peragakan', 'string berisi kegiatan atau benda yang bisa diperagakan tanpa bicara (2-4 kata).'],
+  onemore:['Satu Lagi', 'string berisi topik rantai jawaban, berupa nama kategori benda (2-4 kata), contoh "nama buah".'],
+  selfie: ['Bom Selfie', 'string berisi perintah atau pertanyaan "tunjuk dan oper" yang lucu dan aman.'],
+  flip:   ['Suara Terbalik', 'string berisi kata atau frasa pendek (1-3 kata) yang enak diucapkan dan terdengar lucu saat dibalik.']
+};
+function geminiCount(){
+  const w = Object.keys(gen.cats).reduce((a, k) => a + gen.cats[k].length, 0), q = Object.keys(gen.pools).reduce((a, k) => a + gen.pools[k].length, 0);
+  return {w, q};
+}
+function geminiCard(){
+  const c = geminiCount();
+  return `<div class="card" id="gcard"><div class="label">Tambah konten dengan Gemini (opsional)</div>
+    <p class="small mute">Butuh internet hanya saat membuat. Hasilnya disimpan di HP ini dan dipakai juga saat offline. Kunci API gratis dibuat di aistudio.google.com/apikey. Kunci hanya disimpan di HP ini.</p>
+    <input type="password" id="gk" placeholder="Kunci API Gemini" autocomplete="off" aria-label="Kunci API Gemini" value="${esc(store.get('gkey', ''))}">
+    <input type="text" id="gm" placeholder="Model" aria-label="Model Gemini" value="${esc(store.get('gmodel', 'gemini-2.5-flash'))}">
+    <select id="gt" aria-label="Isi untuk game">${Object.keys(GEN_TARGETS).map(k => `<option value="${k}">${esc(GEN_TARGETS[k][0])}</option>`).join('')}</select>
+    <input type="text" id="gc" placeholder="Tema kata, misalnya Buah atau Film Anak" aria-label="Tema kata" value="Makanan">
+    <div class="row"><select id="gn" aria-label="Jumlah"><option>10</option><option selected>20</option><option>30</option></select><select id="gl" aria-label="Bahasa"><option value="Indonesia">Bahasa Indonesia</option><option value="Inggris">English</option></select></div>
+    <button class="btn sky" data-a="gen" id="gbtn">Buat dan simpan</button>
+    <p class="small" id="gst" role="status"></p>
+    <p class="small mute" id="gcnt">Tersimpan dari Gemini: ${c.w} kata Imposter, ${c.q} soal.</p>
+    <button class="btn alt" data-a="gclear">Hapus semua hasil Gemini</button></div>`;
+}
+function geminiMount(){
+  const $ = s => app.querySelector(s);
+  const sync = () => { $('#gc').hidden = $('#gt').value !== 'cat'; };
+  $('#gt').onchange = sync; sync();
+  $('#gk').onchange = e => store.set('gkey', e.target.value.trim());
+  $('#gm').onchange = e => store.set('gmodel', e.target.value.trim() || 'gemini-2.5-flash');
+  Object.assign(ACT, {
+    gen: async el => {
+      const st = $('#gst'); const key = $('#gk').value.trim(); store.set('gkey', key); store.set('gmodel', $('#gm').value.trim() || 'gemini-2.5-flash');
+      const kind = $('#gt').value, n = +$('#gn').value, lang = $('#gl').value, theme = $('#gc').value.trim();
+      if(!key){ st.textContent = 'Isi kunci API dulu.'; return; }
+      if(kind === 'cat' && !theme){ st.textContent = 'Isi tema kata dulu.'; return; }
+      el.disabled = true; st.style.color = ''; st.textContent = 'Meminta Gemini... tunggu sebentar.';
+      try{
+        const added = await geminiGenerate(kind, n, lang, theme);
+        st.style.color = 'var(--mint)'; st.textContent = added ? `Selesai: ${added} baru ditambahkan dan tersimpan.` : 'Tidak ada yang baru (semuanya sudah ada). Coba tema lain.';
+        const c = geminiCount(); $('#gcnt').textContent = `Tersimpan dari Gemini: ${c.w} kata Imposter, ${c.q} soal.`;
+      }catch(e){ st.style.color = 'var(--coral)'; st.textContent = e.message; }
+      el.disabled = false;
+    },
+    gclear: el => {
+      if(el.dataset.sure !== '1'){ el.dataset.sure = '1'; el.textContent = 'Ketuk lagi untuk menghapus'; return; }
+      gen = {cats: {}, pools: {}}; store.set('gen', gen); el.dataset.sure = ''; el.textContent = 'Hapus semua hasil Gemini'; const c = geminiCount(); $('#gcnt').textContent = `Tersimpan dari Gemini: ${c.w} kata Imposter, ${c.q} soal.`; toast('Hasil Gemini dihapus');
+    }
+  });
+}
+async function geminiCall(prompt){
+  const key = store.get('gkey', ''), model = store.get('gmodel', 'gemini-2.5-flash');
+  let r;
+  try{
+    r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(model) + ':generateContent', {
+      method: 'POST', headers: {'Content-Type': 'application/json', 'x-goog-api-key': key},
+      body: JSON.stringify({contents: [{parts: [{text: prompt}]}], generationConfig: {responseMimeType: 'application/json', temperature: 1}})
+    });
+  }catch(e){ throw new Error('Tidak bisa menghubungi Gemini. Periksa internet, atau buka lewat alamat https.'); }
+  if(!r.ok){
+    let m = ''; try{ m = (await r.json()).error.message; }catch(e){}
+    if(r.status === 400 || r.status === 403) throw new Error('Kunci API ditolak atau model salah (' + r.status + ').' + (m ? ' ' + m.slice(0, 100) : ''));
+    if(r.status === 404) throw new Error('Model "' + model + '" tidak ditemukan. Ganti nama model di kolom Model.');
+    if(r.status === 429) throw new Error('Kuota gratis Gemini habis untuk saat ini. Coba lagi nanti.');
+    throw new Error('Gemini error ' + r.status + (m ? ': ' + m.slice(0, 100) : ''));
+  }
+  const j = await r.json();
+  const parts = (((j.candidates || [])[0] || {}).content || {}).parts || [];
+  const txt = parts.map(p => p.text || '').join('');
+  const s = txt.indexOf('['), e = txt.lastIndexOf(']');
+  if(s < 0 || e < s) throw new Error('Jawaban Gemini tidak berupa daftar. Coba lagi.');
+  try{ return JSON.parse(txt.slice(s, e + 1)); }catch(err){ throw new Error('Jawaban Gemini tidak bisa dibaca. Coba lagi.'); }
+}
+const cleanStr = (s, max) => String(s == null ? '' : s).replace(/[|\n\r]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max);
+async function geminiGenerate(kind, n, lang, theme){
+  const L = lang === 'Inggris' ? 'bahasa Inggris' : 'bahasa Indonesia';
+  const rules = 'Semua isi harus aman untuk semua umur: tanpa kekerasan, konten dewasa, politik, atau SARA. Jangan beri penomoran. Keluaran hanya JSON array, tanpa teks lain.';
+  const existing = (kind === 'cat' ? (allCats()[theme] || []).map(e => e[0]) : poolOf(kind)).slice(0, 40);
+  const avoid = existing.length ? ' Jangan ulangi atau menyerupai contoh yang sudah ada: ' + existing.join('; ') + '.' : '';
+  if(kind === 'cat'){
+    const arr = await geminiCall(`Buat ${n} entri untuk permainan tebak imposter bertema "${theme}" dalam ${L}. Setiap entri adalah ${GEN_TARGETS.cat[1]} ${rules}${avoid}`);
+    const key = Object.keys(allCats()).find(k => k.toLowerCase() === theme.toLowerCase()) || theme;
+    const have = new Set((allCats()[key] || []).map(e => e[0].toLowerCase())); const out = [];
+    arr.forEach(o => {
+      if(!o || typeof o !== 'object') return;
+      const w = cleanStr(o.kata, 40), h = cleanStr(o.petunjuk, 70), m = cleanStr(o.mirip, 40);
+      if(!w || have.has(w.toLowerCase())) return; have.add(w.toLowerCase()); out.push([w, h, m].join('|'));
+    });
+    if(out.length){ gen.cats[key] = (gen.cats[key] || []).concat(out); store.set('gen', gen); }
+    return out.length;
+  }
+  const arr = await geminiCall(`Buat ${n} ${GEN_TARGETS[kind][0]} dalam ${L}. Setiap entri adalah ${GEN_TARGETS[kind][1]} ${rules}${avoid}`);
+  const have = new Set(poolOf(kind).map(s => s.toLowerCase())); const out = [];
+  arr.forEach(s => { const v = cleanStr(typeof s === 'string' ? s : (s && (s.teks || s.text)), 160); if(v.length < 3 || have.has(v.toLowerCase())) return; have.add(v.toLowerCase()); out.push(v); });
+  if(out.length){ gen.pools[kind] = (gen.pools[kind] || []).concat(out); store.set('gen', gen); }
+  return out.length;
+}
+
+
+home();
+
+if('serviceWorker' in navigator && /^https?:$/.test(location.protocol) && document.querySelector('link[rel=manifest]')) navigator.serviceWorker.register('sw.js').catch(function(){});
+})();
+</script>
+</body></html>
